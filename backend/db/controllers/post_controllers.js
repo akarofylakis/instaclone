@@ -26,10 +26,57 @@ const createPost = async (req, res, next) => {
   try {
     await createdPost.save();
   } catch (err) {
-    return next(err);
+    return next(new HttpError('Creating post failed, please try again.', 422));
   }
 
-  res.status(201).json({ createdPost });
+  res
+    .status(201)
+    .json({ createdPost: createdPost.toObject({ getters: true }) });
 };
 
-module.exports = { getPosts, getPost, createPost };
+const updatePost = async (req, res, next) => {
+  const { caption } = req.body;
+  const postId = req.params.postId;
+
+  let post;
+  try {
+    post = await Post.findById(postId);
+  } catch (err) {
+    return next(new HttpError('Updating post failed, please try again.', 500));
+  }
+
+  post.caption = caption;
+
+  try {
+    await post.save();
+  } catch (err) {
+    return next(new HttpError('Updating post failed, please try again.', 500));
+  }
+
+  res.status(200).json({ post: post.toObject({ getters: true }) });
+};
+
+const deletePost = async (req, res, next) => {
+  const postId = req.params.postId;
+
+  let post;
+  try {
+    post = await Post.findById(postId);
+  } catch (err) {
+    return next(new HttpError('Deleting post failed, please try again.', 422));
+  }
+
+  if (!post) {
+    return next(new HttpError('Deleting post failed, please try again.', 422));
+  }
+
+  try {
+    await post.remove();
+  } catch (err) {
+    return next(new HttpError('Deleting post failed, please try again.', 500));
+  }
+
+  res.status(200).json({ post: post.toObject({ getters: true }) });
+};
+
+module.exports = { getPosts, getPost, updatePost, createPost, deletePost };
