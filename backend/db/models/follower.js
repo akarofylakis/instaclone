@@ -15,4 +15,4 @@ const followerSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Follower', followRelationshipSchema);
+module.exports = mongoose.model('Follower', followerSchema);

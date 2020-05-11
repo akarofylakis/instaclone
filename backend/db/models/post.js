@@ -6,7 +6,7 @@ const postSchema = new Schema(
   {
     image_url: { type: String, required: true },
     caption: { type: String, maxlength: 500 },
-    user_id: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
+    user: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
   },
   { timestamps: true }
 );

@@ -15,7 +15,7 @@ const userSchema = new Schema(
     email: { type: String, required: true, uinque: true },
     password: { type: String, required: true, minlength: 6, maxlength: 500 },
     user_info: {
-      fullname: { type: String, required: true, maxlength: 55 },
+      fullname: { type: String, maxlength: 55 },
       summary: { type: String, maxlength: 500 },
       avatar_url: { type: String, maxlength: 500 },
       location_id: { type: mongoose.Types.ObjectId, ref: 'Location' },

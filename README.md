@@ -6,4 +6,5 @@
 
 - [x] Model the database
 - [ ] Create the REST API with Node & Express
-  - [ ] Setup server with Express
+  - [x] Setup server with Express
+  - [x] Create db models and basic endpoints
