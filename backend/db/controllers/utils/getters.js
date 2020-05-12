@@ -1,6 +1,7 @@
 const HttpError = require('../../../src/utils/HttpError');
 
 const User = require('../../models/user');
+const Follow = require('../../models/follower');
 
 const getAll = (collection, exclude) => {
   return async (req, res, next) => {
@@ -23,8 +24,6 @@ const getAll = (collection, exclude) => {
 const getAllByUser = (collection, exclude) => {
   return async (req, res, next) => {
     const userId = req.params.userId;
-
-    console.log(userId);
 
     let user;
     try {
@@ -65,4 +64,44 @@ const getOne = (collection, param) => {
   };
 };
 
-module.exports = { getAll, getOne, getAllByUser };
+const getFeed = (collection) => {
+  return async (req, res, next) => {
+    const userId = req.params.userId;
+
+    let user;
+    try {
+      user = await User.findById(userId);
+    } catch (err) {
+      return next(new HttpError(`Fetching ${collection}s failed.`, 500));
+    }
+
+    let following;
+    try {
+      following = await Follow.find({ follower: user });
+    } catch (err) {
+      return next(new HttpError(`Fetching ${collection}s failed.`, 500));
+    }
+
+    let feed = await following.reduce(async (accum, userFollowing) => {
+      const current = await accum;
+      let userData;
+      try {
+        userData = await collection.find({ user: userFollowing.follower });
+      } catch (err) {
+        return next(new HttpError(`Fetching ${collection}s failed.`, 500));
+      }
+
+      if (userData) {
+        current.push(userData);
+      }
+
+      return current;
+    }, []);
+
+    res.json({
+      feed: feed[0].map((document) => document.toObject({ getters: true })),
+    });
+  };
+};
+
+module.exports = { getAll, getOne, getAllByUser, getFeed };

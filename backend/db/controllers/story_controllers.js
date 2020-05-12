@@ -2,9 +2,10 @@ const HttpError = require('../../src/utils/HttpError');
 
 const Story = require('../models/story');
 const User = require('../models/user');
-const { getOne, getAllByUser } = require('./utils/getters');
+const { getOne, getAllByUser, getFeed } = require('./utils/getters');
 
 const getUserStories = getAllByUser(Story);
+const getStoriesFeed = getFeed(Story);
 const getStory = getOne(Story, 'storyId');
 
 const createStory = async (req, res, next) => {
@@ -59,6 +60,7 @@ const deleteStory = async (req, res, next) => {
 module.exports = {
   getStory,
   getUserStories,
+  getStoriesFeed,
   createStory,
   deleteStory,
 };
