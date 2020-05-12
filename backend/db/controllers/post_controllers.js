@@ -2,9 +2,10 @@ const HttpError = require('../../src/utils/HttpError');
 
 const Post = require('../models/post');
 const User = require('../models/user');
-const { getAll, getOne } = require('./utils/getters');
+const { getAll, getOne, getAllByUser } = require('./utils/getters');
 
 const getPosts = getAll(Post);
+const getUserPosts = getAllByUser(Post);
 const getPost = getOne(Post, 'postId');
 
 const createPost = async (req, res, next) => {
@@ -79,4 +80,11 @@ const deletePost = async (req, res, next) => {
   res.status(200).json({ post: post.toObject({ getters: true }) });
 };
 
-module.exports = { getPosts, getPost, updatePost, createPost, deletePost };
+module.exports = {
+  getPosts,
+  getPost,
+  getUserPosts,
+  updatePost,
+  createPost,
+  deletePost,
+};

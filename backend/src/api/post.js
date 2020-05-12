@@ -3,6 +3,7 @@ const express = require('express');
 const {
   getPosts,
   getPost,
+  getUserPosts,
   updatePost,
   createPost,
   deletePost,
@@ -17,6 +18,7 @@ const router = express.Router();
 
 router.get('/', getPosts);
 router.get('/:postId', getPost);
+router.get('/user/:userId/posts', getUserPosts);
 router.put('/:postId/update', updatePost);
 router.delete('/:postId/delete', deletePost);
 router.delete('/:postId/unlike', unlikePost);

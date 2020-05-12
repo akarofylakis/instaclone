@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const storySchema = new Schema(
   {
     source_url: { type: String, required: true, maxlength: 500 },
-    user_id: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
+    user: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
   },
   { timestamps: true }
 );
