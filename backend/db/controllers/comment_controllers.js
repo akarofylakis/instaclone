@@ -1,4 +1,5 @@
 const HttpError = require('../../src/utils/HttpError');
+const { idGetter } = require('./utils/snippets');
 
 const Post = require('../models/post');
 const User = require('../models/user');
@@ -10,22 +11,14 @@ const commentPost = async (req, res, next) => {
   const { userId, body } = req.body;
 
   let post;
-  try {
-    post = await Post.findById(postId);
-  } catch (err) {
-    return next(
-      new HttpError('Commenting post failed, please try again.', 422)
-    );
-  }
+  post = await idGetter(
+    Post,
+    postId,
+    `Commenting post failed, please try again.`
+  );
 
   let user;
-  try {
-    user = await User.findById(userId);
-  } catch (err) {
-    return next(
-      new HttpError('Commenting post failed, please try again.', 422)
-    );
-  }
+  user = await idGetter(User, userId, `Fetching user failed.`);
 
   const comment = new Comment({
     body,
@@ -50,13 +43,11 @@ const updateComment = async (req, res, next) => {
   const { body } = req.body;
 
   let comment;
-  try {
-    comment = await Comment.findById(commentId);
-  } catch (err) {
-    return next(
-      new HttpError('Updating comment failed, please try again.', 422)
-    );
-  }
+  comment = await idGetter(
+    Comment,
+    commentId,
+    `Updating comment failed, please try again.`
+  );
 
   if (!comment) {
     return next(
@@ -81,13 +72,11 @@ const deleteComment = async (req, res, next) => {
   const commentId = req.params.commentId;
 
   let comment;
-  try {
-    comment = await Comment.findById(commentId);
-  } catch (err) {
-    return next(
-      new HttpError('Deleting comment failed, please try again.', 422)
-    );
-  }
+  comment = await idGetter(
+    Comment,
+    commentId,
+    `Deleting comment failed, please try again.`
+  );
 
   if (!comment) {
     return next(

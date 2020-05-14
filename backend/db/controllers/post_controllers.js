@@ -1,4 +1,5 @@
 const HttpError = require('../../src/utils/HttpError');
+const { idGetter } = require('./utils/snippets');
 
 const Post = require('../models/post');
 const User = require('../models/user');
@@ -13,11 +14,7 @@ const createPost = async (req, res, next) => {
   const { imageUrl, caption, userId } = req.body;
 
   let user;
-  try {
-    user = await User.findById(userId);
-  } catch (err) {
-    return next(new HttpError('Creating post failed, please try again.', 422));
-  }
+  user = await idGetter(User, userId, `Fetching user failed.`);
 
   const createdPost = new Post({
     image_url: imageUrl,
@@ -40,14 +37,22 @@ const updatePost = async (req, res, next) => {
   const { caption } = req.body;
   const postId = req.params.postId;
 
-  let post;
-  try {
-    post = await Post.findById(postId);
-  } catch (err) {
-    return next(new HttpError('Updating post failed, please try again.', 500));
+  if (!caption) {
+    return next(new HttpError('Updating post failed, please try again.', 422));
   }
 
-  post.caption = caption;
+  let post;
+  post = await idGetter(
+    Post,
+    postId,
+    `Updating post failed, please try again.`
+  );
+
+  if (post) {
+    post.caption = caption;
+  } else {
+    return next(new HttpError('Updating post failed, please try again.', 422));
+  }
 
   try {
     await post.save();
@@ -62,11 +67,11 @@ const deletePost = async (req, res, next) => {
   const postId = req.params.postId;
 
   let post;
-  try {
-    post = await Post.findById(postId);
-  } catch (err) {
-    return next(new HttpError('Deleting post failed, please try again.', 422));
-  }
+  post = await idGetter(
+    Post,
+    postId,
+    `Deleting post failed, please try again.`
+  );
 
   if (!post) {
     return next(new HttpError('Deleting post failed, please try again.', 422));

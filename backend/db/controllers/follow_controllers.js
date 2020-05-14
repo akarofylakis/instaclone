@@ -1,4 +1,5 @@
 const HttpError = require('../../src/utils/HttpError');
+const { idGetter } = require('./utils/snippets');
 
 const User = require('../models/user');
 const Follower = require('../models/follower');
@@ -9,18 +10,10 @@ const followUser = async (req, res, next) => {
   const { followerId } = req.body;
 
   let user;
-  try {
-    user = await User.findById(userId);
-  } catch (err) {
-    return next(new HttpError('Following user failed, please try again.', 422));
-  }
+  user = await idGetter(User, userId, `Fetching user failed.`);
 
   let follower;
-  try {
-    follower = await User.findById(followerId);
-  } catch (err) {
-    return next(new HttpError('Following user failed, please try again.', 422));
-  }
+  follower = await idGetter(User, followerId, `Fetching user failed.`);
 
   if (followerId === userId) {
     return next(new HttpError('Following user failed, please try again.', 500));
@@ -61,22 +54,18 @@ const unfollowUser = async (req, res, next) => {
   const { followerId } = req.body;
 
   let user;
-  try {
-    user = await User.findById(userId);
-  } catch (err) {
-    return next(
-      new HttpError('Unfollowing user failed, please try again.', 422)
-    );
-  }
+  user = await idGetter(
+    User,
+    userId,
+    `Unfollowing user failed, please try again.`
+  );
 
   let follower;
-  try {
-    follower = await User.findById(followerId);
-  } catch (err) {
-    return next(
-      new HttpError('Unfollowing user failed, please try again.', 422)
-    );
-  }
+  follower = await idGetter(
+    User,
+    followerId,
+    `Unfollowing user failed, please try again.`
+  );
 
   let follow;
   try {

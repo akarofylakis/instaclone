@@ -1,4 +1,5 @@
 const HttpError = require('../../../src/utils/HttpError');
+const { idGetter } = require('./snippets');
 
 const User = require('../../models/user');
 const Follow = require('../../models/follower');
@@ -13,7 +14,7 @@ const getAll = (collection, exclude) => {
         data = await collection.find({});
       }
     } catch (err) {
-      return next(new HttpError(`Fetching ${collection}s failed.`, 500));
+      return next(new HttpError(`Fetching data failed.`, 500));
     }
     res.json({
       data: data.map((document) => document.toObject({ getters: true })),
@@ -26,11 +27,7 @@ const getAllByUser = (collection, exclude) => {
     const userId = req.params.userId;
 
     let user;
-    try {
-      user = await User.findById(userId);
-    } catch (err) {
-      return next(new HttpError(`Fetching ${collection}s failed.`, 500));
-    }
+    user = await idGetter(User, userId, `Fetching user failed.`);
 
     let data;
     try {
@@ -40,7 +37,7 @@ const getAllByUser = (collection, exclude) => {
         data = await collection.find({ user: user });
       }
     } catch (err) {
-      return next(new HttpError(`Fetching ${collection}s failed.`, 500));
+      return next(new HttpError(`Fetching data failed.`, 500));
     }
     res.json({
       data: data.map((document) => document.toObject({ getters: true })),
@@ -53,11 +50,12 @@ const getOne = (collection, param) => {
     const id = req.params[param];
 
     let data;
-    try {
-      data = await collection.findById(id);
-    } catch (err) {
-      return next(new HttpError(`Fetching ${collection} failed.`, 500));
+    data = await idGetter(collection, id, `Fetching data failed.`);
+
+    if (!data) {
+      return next(new HttpError(`Fetching data failed.`, 422));
     }
+
     res.json({
       data: data.toObject({ getters: true }),
     });
@@ -69,26 +67,24 @@ const getFeed = (collection) => {
     const userId = req.params.userId;
 
     let user;
-    try {
-      user = await User.findById(userId);
-    } catch (err) {
-      return next(new HttpError(`Fetching ${collection}s failed.`, 500));
-    }
+    user = await idGetter(User, userId, `Fetching user failed.`);
 
     let following;
     try {
-      following = await Follow.find({ follower: user });
+      following = await Follow.find({ follower: user, status: true });
     } catch (err) {
-      return next(new HttpError(`Fetching ${collection}s failed.`, 500));
+      return next(new HttpError(`Fetching data failed.`, 500));
     }
 
     let feed = await following.reduce(async (accum, userFollowing) => {
       const current = await accum;
       let userData;
       try {
-        userData = await collection.find({ user: userFollowing.follower });
+        userData = await collection.find({
+          user: userFollowing.user,
+        });
       } catch (err) {
-        return next(new HttpError(`Fetching ${collection}s failed.`, 500));
+        return next(new HttpError(`Fetching data failed.`, 500));
       }
 
       if (userData) {

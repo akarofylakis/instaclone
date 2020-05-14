@@ -15,7 +15,7 @@ const createUser = async (req, res, next) => {
   try {
     existingUser = await User.findOne({ email: email });
   } catch (err) {
-    return next(new HttpError('Creating user failed, please try again.', 500));
+    return next(new HttpError('Creating user failed, please try again.', 501));
   }
   if (existingUser) {
     return next(
@@ -30,7 +30,7 @@ const createUser = async (req, res, next) => {
   try {
     hashedPassword = await bcrypt.hash(password, 12);
   } catch (err) {
-    return next(new HttpError('Creating user failed, please try again.', 500));
+    return next(new HttpError('Creating user failed, please try again.', 502));
   }
 
   const createdUser = new User({
@@ -41,7 +41,7 @@ const createUser = async (req, res, next) => {
   try {
     await createdUser.save();
   } catch (err) {
-    return next(new HttpError('Creating user failed, please try again.', 500));
+    return next(new HttpError('Creating user failed, please try again.', 503));
   }
 
   let token;
@@ -52,7 +52,7 @@ const createUser = async (req, res, next) => {
       { expiresIn: '1h' }
     );
   } catch (err) {
-    return next(new HttpError('Creating user failed, please try again.', 500));
+    return next(new HttpError('Creating user failed, please try again.', 504));
   }
 
   res.status(201).json({
@@ -70,7 +70,7 @@ const signInUser = async (req, res, next) => {
   try {
     existingUser = await User.findOne({ email: email });
   } catch (err) {
-    return next(new HttpError('Signing in failed, please try again.', 500));
+    return next(new HttpError('Signing in failed, please try again.', 422));
   }
   if (!existingUser) {
     return next(new HttpError('Signing in failed, please try again.', 422));
@@ -85,7 +85,7 @@ const signInUser = async (req, res, next) => {
 
   if (!isValidPassword) {
     return next(
-      new HttpError('Invalid credentials, could not log you in.', 401)
+      new HttpError('Invalid credentials, could not log you in.', 422)
     );
   }
 

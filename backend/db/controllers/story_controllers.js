@@ -1,4 +1,5 @@
 const HttpError = require('../../src/utils/HttpError');
+const { idGetter } = require('./utils/snippets');
 
 const Story = require('../models/story');
 const User = require('../models/user');
@@ -12,11 +13,7 @@ const createStory = async (req, res, next) => {
   const { sourceUrl, userId } = req.body;
 
   let user;
-  try {
-    user = await User.findById(userId);
-  } catch (err) {
-    return next(new HttpError('Creating story failed, please try again.', 422));
-  }
+  user = await idGetter(User, userId, `Fetching user failed.`);
 
   const createdStory = new Story({
     source_url: sourceUrl,
@@ -38,11 +35,11 @@ const deleteStory = async (req, res, next) => {
   const storyId = req.params.storyId;
 
   let story;
-  try {
-    story = await Story.findById(storyId);
-  } catch (err) {
-    return next(new HttpError('Deleting story failed, please try again.', 422));
-  }
+  story = await idGetter(
+    Story,
+    storyId,
+    `Deleting story failed, please try again.`
+  );
 
   if (!story) {
     return next(new HttpError('Deleting story failed, please try again.', 422));

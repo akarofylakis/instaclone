@@ -1,4 +1,5 @@
 const HttpError = require('../../src/utils/HttpError');
+const { idGetter } = require('./utils/snippets');
 
 const Post = require('../models/post');
 const User = require('../models/user');
@@ -10,18 +11,10 @@ const likePost = async (req, res, next) => {
   const { userId } = req.body;
 
   let post;
-  try {
-    post = await Post.findById(postId);
-  } catch (err) {
-    return next(new HttpError('Liking post failed, please try again.', 422));
-  }
+  post = await idGetter(Post, postId, `Liking post failed, please try again.`);
 
   let user;
-  try {
-    user = await User.findById(userId);
-  } catch (err) {
-    return next(new HttpError('Liking post failed, please try again.', 422));
-  }
+  user = await idGetter(User, userId, `Fetching user failed.`);
 
   let existinglike;
   try {
@@ -54,18 +47,14 @@ const unlikePost = async (req, res, next) => {
   const { userId } = req.body;
 
   let post;
-  try {
-    post = await Post.findById(postId);
-  } catch (err) {
-    return next(new HttpError('Unliking post failed, please try again.', 422));
-  }
+  post = await idGetter(
+    Post,
+    postId,
+    `Unliking post failed, please try again.`
+  );
 
   let user;
-  try {
-    user = await User.findById(userId);
-  } catch (err) {
-    return next(new HttpError('Unliking post failed, please try again.', 422));
-  }
+  user = await idGetter(User, userId, `Fetching user failed.`);
 
   let like;
   try {

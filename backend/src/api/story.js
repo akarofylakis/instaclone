@@ -13,7 +13,9 @@ const router = express.Router();
 router.get('/:storyId', getStory);
 router.get('/user/:userId/stories', getUserStories);
 router.get('/feed/:userId', getStoriesFeed);
+
 router.delete('/:storyId/delete', deleteStory);
+
 router.post('/create', createStory);
 
 module.exports = router;
