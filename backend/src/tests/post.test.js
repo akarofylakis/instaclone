@@ -82,6 +82,28 @@ describe('GET /api/v1/posts/:postId', () => {
   });
 });
 
+describe('GET /api/v1/posts/user/:userId/posts', () => {
+  it('should return user posts', async (done) => {
+    const response = await request(app)
+      .get(`/api/v1/posts/user/${post.userId}/posts`)
+      .expect('Content-Type', /json/)
+      .expect(200);
+
+    expect(response.body.data).not.toBeNull();
+
+    done();
+  });
+
+  it('should return not existing posts error', async (done) => {
+    const response = await request(app)
+      .get(`/api/v1/posts/user/nosuchuser/posts`)
+      .expect('Content-Type', /json/)
+      .expect(422);
+
+    done();
+  });
+});
+
 describe('PUT /api/v1/posts/:postId/update', () => {
   it('should return updated post', async (done) => {
     const response = await request(app)
@@ -112,7 +134,7 @@ describe('PUT /api/v1/posts/:postId/update', () => {
   });
 });
 
-describe('GET /api/v1/posts/:postId/delete', () => {
+describe('DELETE /api/v1/posts/:postId/delete', () => {
   it('should return deleted post', async (done) => {
     const response = await request(app)
       .delete(`/api/v1/posts/${post.id}/delete`)

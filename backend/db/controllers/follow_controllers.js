@@ -15,8 +15,12 @@ const followUser = async (req, res, next) => {
   let follower;
   follower = await idGetter(User, followerId, `Fetching user failed.`);
 
+  if (!follower || !user) {
+    return next(new HttpError('Following user failed, please try again.', 422));
+  }
+
   if (followerId === userId) {
-    return next(new HttpError('Following user failed, please try again.', 500));
+    return next(new HttpError('Following user failed, please try again.', 422));
   }
 
   let existingFollow;
@@ -26,11 +30,11 @@ const followUser = async (req, res, next) => {
       user: user,
     });
   } catch (err) {
-    return next(new HttpError('Following user failed, please try again.', 500));
+    return next(new HttpError('Following user failed, please try again.', 422));
   }
 
   if (existingFollow) {
-    return next(new HttpError('Following user failed, please try again.', 500));
+    return next(new HttpError('Following user failed, please try again.', 422));
   }
 
   const follow = new Follower({
@@ -66,6 +70,10 @@ const unfollowUser = async (req, res, next) => {
     followerId,
     `Unfollowing user failed, please try again.`
   );
+
+  if (!follower || !user) {
+    return next(new HttpError('Following user failed, please try again.', 422));
+  }
 
   let follow;
   try {

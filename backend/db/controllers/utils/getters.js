@@ -29,6 +29,10 @@ const getAllByUser = (collection, exclude) => {
     let user;
     user = await idGetter(User, userId, `Fetching user failed.`);
 
+    if (!user) {
+      return next(new HttpError(`Fetching data failed.`, 422));
+    }
+
     let data;
     try {
       if (exclude) {

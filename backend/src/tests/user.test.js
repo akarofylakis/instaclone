@@ -24,10 +24,17 @@ describe('GET /api/v1/users', () => {
 });
 
 let user = {
+  email: 'esasdfdsaf11232212331233ds45af123@gmail.com',
+  username: '123212123213411233123',
+  password: '5eb97169c52dba26f4cfe0bd',
+  id: '5ebd19b1064e27211c643656',
+};
+
+let userFollowing = {
   email: 'asdf@gmail.com',
   username: '12333123',
   password: '5eb97169c52dba26f4cfe0bd',
-  id: '5ebd19b1064e27211c643656',
+  id: '5ebd19d00487dc35cc797c2d',
 };
 
 // describe('POST /api/v1/users/signup', () => {
@@ -101,6 +108,121 @@ describe('POST /api/v1/users/signin', () => {
       .expect(422);
 
     expect(response.body.token).toBeUndefined();
+
+    done();
+  });
+});
+
+describe('POST /api/v1/users/:userId/follow', () => {
+  // it('should return follow relationship object', async (done) => {
+  //   const body = {
+  //     followerId: user.id,
+  //   };
+
+  //   const response = await request(app)
+  //     .post(`/api/v1/users/${userFollowing.id}/follow`)
+  //     .send(body)
+  //     .expect('Content-Type', /json/)
+  //     .expect(201);
+
+  //   done();
+  // });
+
+  it('should return non existing user error', async (done) => {
+    const body = {
+      followerId: 'nosuchuser',
+    };
+
+    const response = await request(app)
+      .post(`/api/v1/users/${userFollowing.id}/follow`)
+      .send(body)
+      .expect('Content-Type', /json/)
+      .expect(422);
+
+    done();
+  });
+
+  // it('should return existing follow error', async (done) => {
+  //   const body = {
+  //     followerId: user.id,
+  //   };
+
+  //   const response = await request(app)
+  //     .post(`/api/v1/users/${userFollowing.id}/follow`)
+  //     .send(body)
+  //     .expect('Content-Type', /json/)
+  //     .expect(422);
+
+  //   done();
+  // });
+
+  it('should return same user error', async (done) => {
+    const body = {
+      followerId: user.id,
+    };
+
+    const response = await request(app)
+      .post(`/api/v1/users/${user.id}/follow`)
+      .send(body)
+      .expect('Content-Type', /json/)
+      .expect(422);
+
+    done();
+  });
+});
+
+describe('DELETE /api/v1/users/:userId/unfollow', () => {
+  // it('should return follow relationship object', async (done) => {
+  //   const body = {
+  //     followerId: user.id,
+  //   };
+
+  //   const response = await request(app)
+  //     .delete(`/api/v1/users/${userFollowing.id}/unfollow`)
+  //     .send(body)
+  //     .expect('Content-Type', /json/)
+  //     .expect(200);
+
+  //   done();
+  // });
+
+  it('should return non existing user error', async (done) => {
+    const body = {
+      followerId: 'nosuchuser',
+    };
+
+    const response = await request(app)
+      .delete(`/api/v1/users/${userFollowing.id}/unfollow`)
+      .send(body)
+      .expect('Content-Type', /json/)
+      .expect(422);
+
+    done();
+  });
+
+  // it('should return non existing follow error', async (done) => {
+  //   const body = {
+  //     followerId: user.id,
+  //   };
+  //   const response = await request(app)
+  //     .delete(`/api/v1/users/${userFollowing.id}/unfollow`)
+  //     .send(body)
+  //     .expect('Content-Type', /json/)
+  //     .expect(422);
+  //   done();
+  // });
+  // });
+
+  it('should return same user error', async (done) => {
+    const body = {
+      followerId: user.id,
+    };
+
+    const response = await request(app)
+      .delete(`/api/v1/users/${user.id}/unfollow`)
+      .send(body)
+      .expect('Content-Type', /json/)
+      .expect(422);
 
     done();
   });
