@@ -1,0 +1,18 @@
+.story-feed {
+  width: 90%;
+  margin: 0 auto;
+  margin-top: 0px;
+  h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 25px;
+  }
+
+  .feed-list {
+    display: flex;
+
+    li {
+      margin-right: 15px;
+    }
+  }
+}

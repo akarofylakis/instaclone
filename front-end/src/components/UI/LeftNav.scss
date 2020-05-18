@@ -1,0 +1,110 @@
+.leftNav {
+  width: 25%;
+  padding: 20px 0;
+  box-sizing: border-box;
+  background-color: var(--bg-color);
+  display: fixed;
+  flex-direction: row;
+  height: 100vh;
+  .leftNav__logo-image {
+    display: block;
+    width: 60px;
+    height: 60px;
+    background-image: url('../../img/logo.png');
+    background-size: cover;
+    margin: 0 auto;
+  }
+  .leftNav__profile-container {
+    margin-top: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    h3 {
+      margin: 20px 0 10px 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    h6 {
+      font-size: 13px;
+      color: #aaa;
+    }
+  }
+  .leftNav__navigation-container {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+
+    li {
+      a {
+        display: flex;
+        align-items: center;
+        position: relative;
+        padding: 15px 0;
+        padding-left: 40px;
+        font-size: 14px;
+        img {
+          width: 20px;
+          margin-right: 30px;
+        }
+        h5 {
+          font-weight: 600;
+        }
+        h6 {
+          color: #ccc;
+          font-weight: 600;
+          margin-left: 20px;
+        }
+      }
+      &.active a {
+        background-color: #eee;
+
+        &:after {
+          content: '';
+          display: block;
+          width: 3px;
+          height: 100%;
+          background-color: #25bf6b;
+          position: absolute;
+          top: 0px;
+          right: 0px;
+        }
+      }
+      &:hover {
+        background-color: #eee;
+      }
+
+      &:nth-child(4) img {
+        width: 25px;
+        margin-right: 27px;
+        margin-left: -2px;
+      }
+    }
+  }
+  .leftNav__user-info-container {
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    > div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-right: 1px solid #ddd;
+      padding-right: 20px;
+      h5 {
+        font-weight: 700;
+        font-size: 15px;
+        margin-bottom: 10px;
+      }
+      h6 {
+        font-size: 14px;
+        color: #aaa;
+      }
+      &:last-child {
+        padding-right: 0;
+        border-right: 0;
+      }
+    }
+  }
+}
