@@ -1,0 +1,67 @@
+.btn {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  cursor: pointer;
+  padding: 6px 20px;
+  text-align: center;
+  border: none;
+  border-radius: 5px;
+  outline: none;
+
+  span {
+    margin-left: 5px;
+  }
+}
+
+.btn--primary {
+  background-size: 300% 100%;
+  -o-transition: all 0.4s ease-in-out;
+  -webkit-transition: all 0.4s ease-in-out;
+  transition: all 0.4s ease-in-out;
+  background-image: linear-gradient(
+    to right,
+    #0ba360,
+    #3cba92,
+    #30dd8a,
+    #2bb673
+  );
+  box-shadow: 0 2px 5px 0 rgba(23, 168, 108, 0.75);
+}
+
+.btn--google {
+  padding: 7px 20px;
+  background-size: 300% 100%;
+  -o-transition: all 0.4s ease-in-out;
+  -webkit-transition: all 0.4s ease-in-out;
+  transition: all 0.4s ease-in-out;
+  background-image: linear-gradient(
+    to right,
+    #25aae1,
+    #4481eb,
+    #04befe,
+    #3f86ed
+  );
+  box-shadow: 0 2px 5px 0 rgba(65, 132, 234, 0.75);
+}
+
+.btn--primary:hover,
+.btn--google:hover {
+  background-position: 100% 0;
+  -o-transition: all 0.4s ease-in-out;
+  -webkit-transition: all 0.4s ease-in-out;
+  transition: all 0.4s ease-in-out;
+}
+
+.btn--secondary {
+  background-color: transparent;
+  color: #2bb673;
+  border: 2px solid #2bb673;
+}
+
+.btn--secondary:hover {
+  background-color: #2bb673;
+  color: #fff;
+}

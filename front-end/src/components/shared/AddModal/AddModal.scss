@@ -1,0 +1,47 @@
+.add-modal {
+  position: fixed;
+  left: 60%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  border-radius: 6px;
+  background-color: #fff;
+  width: 40%;
+  height: 400px;
+  padding: 50px;
+  box-sizing: border-box;
+  .add-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    > * {
+      margin-bottom: 30px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .image-upload-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .image-preview {
+        width: 120px;
+        height: 120px;
+        background-color: #eee;
+        margin-right: 50px;
+        border-radius: 6px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        h6 {
+          color: #aaa;
+          font-size: 11px;
+          width: 50%;
+          text-align: center;
+        }
+      }
+    }
+  }
+}

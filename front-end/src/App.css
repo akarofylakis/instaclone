@@ -16,6 +16,9 @@ body {
 
 #root {
   width: 100vw;
+}
+
+.page-container {
   display: flex;
 }
 

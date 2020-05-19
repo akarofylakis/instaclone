@@ -1,0 +1,30 @@
+.input-container-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+input,
+textarea {
+  background-color: var(--label-color);
+  border-radius: 7px 0 0 7px;
+  padding: 11px 15px;
+  width: 200px;
+  color: #1f1f1f;
+
+  ::placeholder {
+    color: #aaa;
+    font-size: 12px;
+  }
+}
+
+.input-container-textarea {
+  width: 80%;
+
+  textarea {
+    width: 100%;
+    resize: none;
+    outline: none;
+    min-height: 70px;
+  }
+}
