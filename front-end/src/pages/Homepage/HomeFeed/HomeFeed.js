@@ -1,90 +1,36 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+
+import { fetchPostsAsync } from '../../../redux/posts/post-actions';
+import {
+  selectPosts,
+  selectPostsIsFetching,
+} from '../../../redux/posts/post-selectors';
+
 import Item from '../../../components/UI/Item/Item';
 
 import './HomeFeed.scss';
 
-const tileData = [
-  {
-    img:
-      'https://images.unsplash.com/photo-1502940113860-9d7391613fa7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-    title: 'Image',
-    author: 'author',
-    cols: 1,
-  },
-  {
-    img:
-      'https://images.unsplash.com/photo-1514315384763-ba401779410f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=630&q=80',
-    title: 'Image',
-    author: 'author',
-    cols: 2,
-  },
-  {
-    img:
-      'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80',
-    title: 'Image',
-    author: 'author',
-    cols: 2,
-  },
-  {
-    img:
-      'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80',
-    title: 'Image',
-    author: 'author',
-    cols: 1,
-  },
-  {
-    img:
-      'https://images.unsplash.com/photo-1514315384763-ba401779410f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=630&q=80',
-    title: 'Image',
-    author: 'author',
-    cols: 2,
-  },
-  {
-    img:
-      'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80',
-    title: 'Image',
-    author: 'author',
-    cols: 2,
-  },
-  {
-    img:
-      'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80',
-    title: 'Image',
-    author: 'author',
-    cols: 1,
-  },
-  {
-    img:
-      'https://images.unsplash.com/photo-1514315384763-ba401779410f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=630&q=80',
-    title: 'Image',
-    author: 'author',
-    cols: 2,
-  },
-  {
-    img:
-      'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80',
-    title: 'Image',
-    author: 'author',
-    cols: 2,
-  },
-];
+const HomeFeed = ({ fetchPosts, posts, postsIsFetching }) => {
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
 
-const HomeFeed = () => {
   return (
     <div className='homeFeed'>
       <h2>Feed</h2>
       <div className='list-container'>
+        {postsIsFetching && <h2>Loading...</h2>}
         <ul className='feed-list'>
-          {tileData.map((tile) => (
+          {posts.map((post) => (
             <Item
-              key={tile.img}
-              source={tile.img}
+              key={post.id}
+              source={post.image_url}
               likes={122}
               comments={3}
               user={{
-                img:
-                  'https://images.unsplash.com/photo-1518157542428-1be9739022f4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80',
-                username: 'josdfsae2',
+                img: post.image_url,
+                username: post.user,
               }}
             />
           ))}
@@ -94,4 +40,13 @@ const HomeFeed = () => {
   );
 };
 
-export default HomeFeed;
+const mapDispatchToProps = (dispatch) => ({
+  fetchPosts: () => dispatch(fetchPostsAsync()),
+});
+
+const mapStateToProps = (state) => ({
+  posts: selectPosts(state),
+  postsIsFetching: selectPostsIsFetching(state),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeFeed);

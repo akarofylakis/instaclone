@@ -7,12 +7,13 @@ import {
 } from 'react-router-dom';
 
 import Header from '../../UI/Header/Header';
-import Footer from '../../UI/Button/Footer/Footer';
+import Footer from '../../UI/Footer/Footer';
 import LeftNav from '../../UI/LeftNav/LeftNav';
 import HomeFeed from '../../../pages/Homepage/HomeFeed/HomeFeed';
 import StoryFeed from '../../../pages/Homepage/StoryFeed/StoryFeed';
 import User from '../../../pages/User/User';
 import Post from '../../../pages/Post/Post';
+import Search from '../../../pages/Search/Search';
 import Content from '../Content/Content';
 
 const SignedIn = () => {
@@ -32,6 +33,9 @@ const SignedIn = () => {
             </Route>
             <Route path={`/post`} exact>
               <Post />
+            </Route>
+            <Route path={`/search`} exact>
+              <Search />
             </Route>
           </Switch>
         </Content>

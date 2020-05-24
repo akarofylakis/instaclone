@@ -2,17 +2,17 @@ import React from 'react';
 
 import './Input.scss';
 
-const Input = ({ type, name, placeholder }) => {
+const Input = ({ onChange, ...otherProps }) => {
   return (
     <div
       className={`input-container ${
-        type === 'search' && 'input-container-search'
-      } ${type === 'textarea' && 'input-container-textarea'}`}
+        otherProps.type === 'textarea' && 'input-container-textarea'
+      }`}
     >
-      {type === 'textarea' ? (
-        <textarea type={type} name={name} placeholder={placeholder}></textarea>
+      {otherProps.type === 'textarea' ? (
+        <textarea onChange={onChange} {...otherProps}></textarea>
       ) : (
-        <input type={type} name={name} placeholder={placeholder} />
+        <input onChange={onChange} {...otherProps} />
       )}
     </div>
   );

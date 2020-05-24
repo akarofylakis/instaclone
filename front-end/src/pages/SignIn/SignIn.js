@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import Button from '../../components/UI/Button/Button';
@@ -6,13 +6,36 @@ import Input from '../../components/UI/Input/Input';
 
 import './SignIn.scss';
 
-const SignIn = ({ match }) => {
+const SignIn = () => {
+  const [userCredentials, setCredentials] = useState({
+    email: '',
+    password: '',
+  });
+  const { email, password } = userCredentials;
+
+  const changeHandler = (e) => {
+    const { value, name } = e.target;
+    setCredentials({ ...userCredentials, [name]: value });
+  };
+
   return (
     <div className='sign-in__content-container'>
       <form className='add-form'>
         <h3>Sign In</h3>
-        <Input name='email' placeholder='Email' />
-        <Input name='password' placeholder='Password' />
+        <Input
+          value={email}
+          onChange={changeHandler}
+          type='email'
+          name='email'
+          placeholder='Email'
+        />
+        <Input
+          value={password}
+          onChange={changeHandler}
+          type='password'
+          name='password'
+          placeholder='Password'
+        />
         <Button primary type='submit' text='Sign In'>
           <img
             alt='sign-in'

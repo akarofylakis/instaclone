@@ -19,9 +19,11 @@ const Header = () => {
       <div className='inner-container'>
         <div className='input-container'>
           <Input type='search' placeholder='Who are you looking for?' />
-          <button className='search-btn'>
-            <SearchIcon />
-          </button>
+          <Link to='search'>
+            <button className='search-btn'>
+              <SearchIcon />
+            </button>
+          </Link>
         </div>
 
         <div className='header__right-section-container'>
