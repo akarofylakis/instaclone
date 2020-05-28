@@ -1,65 +1,34 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+
+import { fetchStoriesAsync } from '../../../redux/stories/story-actions';
+import {
+  selectStories,
+  selectStoriesIsFetching,
+} from '../../../redux/stories/story-selectors';
+
 import Avatar from '../../../components/UI/Avatar/Avatar';
+import LoadingSpinner from '../../../components/UI/LoadingSpinner/LoadingSpinner';
 
 import './StoryFeed.scss';
 
-const tileData = [
-  {
-    img:
-      'https://images.unsplash.com/photo-1502940113860-9d7391613fa7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-    title: 'Image',
-    author: 'author',
-    cols: 1,
-  },
-  {
-    img:
-      'https://images.unsplash.com/photo-1514315384763-ba401779410f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=630&q=80',
-    title: 'Image',
-    author: 'author',
-    cols: 2,
-  },
-  {
-    img:
-      'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80',
-    title: 'Image',
-    author: 'author',
-    cols: 2,
-  },
-  {
-    img:
-      'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80',
-    title: 'Image',
-    author: 'author',
-    cols: 1,
-  },
-  {
-    img:
-      'https://images.unsplash.com/photo-1514315384763-ba401779410f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=630&q=80',
-    title: 'Image',
-    author: 'author',
-    cols: 2,
-  },
-  {
-    img:
-      'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80',
-    title: 'Image',
-    author: 'author',
-    cols: 2,
-  },
-];
+const StoryFeed = ({ fetchStories, stories, storiesIsFetching }) => {
+  useEffect(() => {
+    fetchStories();
+  }, [fetchStories]);
 
-const StoryFeed = () => {
   return (
     <div className='story-feed'>
       <h2>Stories</h2>
       <div className='list-container'>
         <ul className='feed-list'>
-          {tileData.map((tile) => (
-            <li key={tile.img}>
-              <Avatar source={tile.img} size={50} />
+          {storiesIsFetching && <LoadingSpinner />}
+          {stories.map((story) => (
+            <li key={story.id}>
+              <Avatar source={story.source_url} size={50} />
               <Link to='profile'>
-                <h5>amanjdo1</h5>
+                <h5>amanda1992_</h5>
               </Link>
             </li>
           ))}
@@ -69,4 +38,13 @@ const StoryFeed = () => {
   );
 };
 
-export default StoryFeed;
+const mapDispatchToProps = (dispatch) => ({
+  fetchStories: () => dispatch(fetchStoriesAsync()),
+});
+
+const mapStateToProps = (state) => ({
+  stories: selectStories(state),
+  storiesIsFetching: selectStoriesIsFetching(state),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(StoryFeed);

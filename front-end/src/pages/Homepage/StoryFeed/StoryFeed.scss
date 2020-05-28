@@ -2,6 +2,8 @@
   width: 90%;
   margin: 0 auto;
   margin-top: 20px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #eee;
   h2 {
     font-size: 22px;
     font-weight: 600;
@@ -11,6 +13,9 @@
   .feed-list {
     display: flex;
     li {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       margin-right: 15px;
       h5 {
         text-align: center;

@@ -35,8 +35,9 @@
     display: flex;
     flex-direction: column;
 
-    li {
-      a {
+    a {
+      display: block;
+      li {
         display: flex;
         align-items: center;
         position: relative;
@@ -56,7 +57,7 @@
           margin-left: 20px;
         }
       }
-      &.active a {
+      &.active li {
         background-color: #eee;
 
         &:after {

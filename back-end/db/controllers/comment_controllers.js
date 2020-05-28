@@ -6,19 +6,17 @@ const User = require('../models/user');
 const Comment = require('../models/comment');
 
 const commentPost = async (req, res, next) => {
-  const postId = req.params.postId;
+  const { postId } = req.params;
 
   const { userId, body } = req.body;
 
-  let post;
-  post = await idGetter(
+  const post = await idGetter(
     Post,
     postId,
     `Commenting post failed, please try again.`
   );
 
-  let user;
-  user = await idGetter(User, userId, `Fetching user failed.`);
+  const user = await idGetter(User, userId, `Fetching user failed.`);
 
   const comment = new Comment({
     body,
@@ -34,16 +32,23 @@ const commentPost = async (req, res, next) => {
     );
   }
 
-  res.status(201).json({ comment: comment.toObject({ getters: true }) });
+  const postComments = post.comments_count;
+  post.comments_count = postComments + 1;
+  try {
+    await post.save();
+  } catch (err) {
+    return next(new HttpError('Liking post failed, please try again.', 500));
+  }
+
+  return res.status(201).json({ comment: comment.toObject({ getters: true }) });
 };
 
 const updateComment = async (req, res, next) => {
-  const commentId = req.params.commentId;
+  const { commentId } = req.params;
 
   const { body } = req.body;
 
-  let comment;
-  comment = await idGetter(
+  const comment = await idGetter(
     Comment,
     commentId,
     `Updating comment failed, please try again.`
@@ -65,17 +70,23 @@ const updateComment = async (req, res, next) => {
     );
   }
 
-  res.status(200).json({ comment: comment.toObject({ getters: true }) });
+  return res.status(200).json({ comment: comment.toObject({ getters: true }) });
 };
 
 const deleteComment = async (req, res, next) => {
-  const commentId = req.params.commentId;
+  const { commentId } = req.params;
+  const { postId } = req.body;
 
-  let comment;
-  comment = await idGetter(
+  const comment = await idGetter(
     Comment,
     commentId,
     `Deleting comment failed, please try again.`
+  );
+
+  const post = await idGetter(
+    Post,
+    postId,
+    `Commenting post failed, please try again.`
   );
 
   if (!comment) {
@@ -92,7 +103,15 @@ const deleteComment = async (req, res, next) => {
     );
   }
 
-  res.status(200).json({ comment: comment.toObject({ getters: true }) });
+  const postComments = post.comments_count;
+  post.comments_count = postComments - 1;
+  try {
+    await post.save();
+  } catch (err) {
+    return next(new HttpError('Liking post failed, please try again.', 500));
+  }
+
+  return res.status(200).json({ comment: comment.toObject({ getters: true }) });
 };
 
 module.exports = { commentPost, updateComment, deleteComment };

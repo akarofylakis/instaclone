@@ -1,24 +1,23 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { connect } from 'react-redux';
+
+import { selectCurrentUser } from './redux/users/user-selectors';
 
 import SignedIn from './components/shared/SignedIn/SignedIn';
 import SignedOut from './components/shared/SignedOut/SignedOut';
 
 import './App.css';
 
-const App = () => {
+const App = ({ currentUser }) => {
   return (
-    <Router>
-      <Switch>
-        <Route path='/signedout'>
-          <SignedOut />
-        </Route>
-        <Route path='/'>
-          <SignedIn />
-        </Route>
-      </Switch>
-    </Router>
+    <div className='app'>
+      {currentUser === null ? <SignedOut /> : <SignedIn />}
+    </div>
   );
 };
 
-export default App;
+const mapStateToProps = (state) => ({
+  currentUser: selectCurrentUser(state),
+});
+
+export default connect(mapStateToProps)(App);

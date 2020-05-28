@@ -2,6 +2,8 @@ import UserActionTypes from './user-types';
 
 const INITIAL_STATE = {
   currentUser: null,
+  searchResults: [],
+  isFetching: false,
   error: null,
 };
 
@@ -20,6 +22,42 @@ const userReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         currentUser: action.payload,
+      };
+    case UserActionTypes.SIGN_IN_START:
+      return {
+        ...state,
+      };
+    case UserActionTypes.SIGN_IN_FAILURE:
+      return {
+        ...state,
+        error: action.payload,
+      };
+    case UserActionTypes.SIGN_IN_SUCCESS:
+      return {
+        ...state,
+        currentUser: action.payload,
+      };
+    case UserActionTypes.SIGN_OUT:
+      return {
+        ...state,
+        currentUser: null,
+      };
+    case UserActionTypes.SEARCH_USERS_START:
+      return {
+        ...state,
+        isFetching: true,
+      };
+    case UserActionTypes.SEARCH_USERS_FAILURE:
+      return {
+        ...state,
+        error: action.payload,
+        isFetching: false,
+      };
+    case UserActionTypes.SEARCH_USERS_SUCCESS:
+      return {
+        ...state,
+        searchResults: action.payload,
+        isFetching: false,
       };
     default:
       return state;

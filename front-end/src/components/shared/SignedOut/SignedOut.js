@@ -3,7 +3,7 @@ import {
   BrowserRouter as Router,
   Route,
   Switch,
-  withRouter,
+  Redirect,
 } from 'react-router-dom';
 
 import SignUp from '../../../pages/SignUp/SignUp';
@@ -12,19 +12,19 @@ import LeftContainer from '../../UI/LeftContainer/LeftContainer';
 import Content from '../Content/Content';
 
 const SignedOut = ({ match }) => {
-  console.log(match);
   return (
     <Router>
       <div className='page-container signed-out-container'>
         <LeftContainer />
         <Content>
           <Switch>
-            <Route path={`${match.path}/signup`}>
+            <Route path={`/signup`}>
               <SignUp />
             </Route>
-            <Route path={`${match.path}/signin`}>
+            <Route path={`/signin`}>
               <SignIn />
             </Route>
+            <Route render={() => <Redirect to='/signin' />} />
           </Switch>
         </Content>
       </div>
@@ -32,4 +32,4 @@ const SignedOut = ({ match }) => {
   );
 };
 
-export default withRouter(SignedOut);
+export default SignedOut;

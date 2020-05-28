@@ -13,8 +13,7 @@ const getPost = getOne(Post, 'postId');
 const createPost = async (req, res, next) => {
   const { imageUrl, caption, userId } = req.body;
 
-  let user;
-  user = await idGetter(User, userId, `Fetching user failed.`);
+  const user = await idGetter(User, userId, `Fetching user failed.`);
 
   const createdPost = new Post({
     image_url: imageUrl,
@@ -28,21 +27,20 @@ const createPost = async (req, res, next) => {
     return next(new HttpError('Creating post failed, please try again.', 422));
   }
 
-  res
+  return res
     .status(201)
     .json({ createdPost: createdPost.toObject({ getters: true }) });
 };
 
 const updatePost = async (req, res, next) => {
   const { caption } = req.body;
-  const postId = req.params.postId;
+  const { postId } = req.params;
 
   if (!caption) {
     return next(new HttpError('Updating post failed, please try again.', 422));
   }
 
-  let post;
-  post = await idGetter(
+  const post = await idGetter(
     Post,
     postId,
     `Updating post failed, please try again.`
@@ -60,14 +58,13 @@ const updatePost = async (req, res, next) => {
     return next(new HttpError('Updating post failed, please try again.', 500));
   }
 
-  res.status(200).json({ post: post.toObject({ getters: true }) });
+  return res.status(200).json({ post: post.toObject({ getters: true }) });
 };
 
 const deletePost = async (req, res, next) => {
-  const postId = req.params.postId;
+  const { postId } = req.params;
 
-  let post;
-  post = await idGetter(
+  const post = await idGetter(
     Post,
     postId,
     `Deleting post failed, please try again.`
@@ -83,7 +80,7 @@ const deletePost = async (req, res, next) => {
     return next(new HttpError('Deleting post failed, please try again.', 500));
   }
 
-  res.status(200).json({ post: post.toObject({ getters: true }) });
+  return res.status(200).json({ post: post.toObject({ getters: true }) });
 };
 
 module.exports = {

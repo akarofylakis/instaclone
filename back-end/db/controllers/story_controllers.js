@@ -3,8 +3,9 @@ const { idGetter } = require('./utils/snippets');
 
 const Story = require('../models/story');
 const User = require('../models/user');
-const { getOne, getAllByUser, getFeed } = require('./utils/getters');
+const { getAll, getOne, getAllByUser, getFeed } = require('./utils/getters');
 
+const getStories = getAll(Story);
 const getUserStories = getAllByUser(Story);
 const getStoriesFeed = getFeed(Story);
 const getStory = getOne(Story, 'storyId');
@@ -12,8 +13,7 @@ const getStory = getOne(Story, 'storyId');
 const createStory = async (req, res, next) => {
   const { sourceUrl, userId } = req.body;
 
-  let user;
-  user = await idGetter(User, userId, `Fetching user failed.`);
+  const user = await idGetter(User, userId, `Fetching user failed.`);
 
   const createdStory = new Story({
     source_url: sourceUrl,
@@ -26,16 +26,15 @@ const createStory = async (req, res, next) => {
     return next(new HttpError('Creating story failed, please try again.', 422));
   }
 
-  res
+  return res
     .status(201)
     .json({ createdStory: createdStory.toObject({ getters: true }) });
 };
 
 const deleteStory = async (req, res, next) => {
-  const storyId = req.params.storyId;
+  const { storyId } = req.params;
 
-  let story;
-  story = await idGetter(
+  const story = await idGetter(
     Story,
     storyId,
     `Deleting story failed, please try again.`
@@ -51,10 +50,11 @@ const deleteStory = async (req, res, next) => {
     return next(new HttpError('Deleting story failed, please try again.', 500));
   }
 
-  res.status(200).json({ story: story.toObject({ getters: true }) });
+  return res.status(200).json({ story: story.toObject({ getters: true }) });
 };
 
 module.exports = {
+  getStories,
   getStory,
   getUserStories,
   getStoriesFeed,

@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+
+import { signInAsync } from '../../redux/users/user-actions';
 
 import Button from '../../components/UI/Button/Button';
 import Input from '../../components/UI/Input/Input';
 
 import './SignIn.scss';
 
-const SignIn = () => {
+const SignIn = ({ signIn }) => {
   const [userCredentials, setCredentials] = useState({
     email: '',
     password: '',
@@ -18,9 +21,15 @@ const SignIn = () => {
     setCredentials({ ...userCredentials, [name]: value });
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    signIn({ email, password });
+  };
+
   return (
     <div className='sign-in__content-container'>
-      <form className='add-form'>
+      <form className='add-form' onSubmit={handleSubmit}>
         <h3>Sign In</h3>
         <Input
           value={email}
@@ -56,4 +65,8 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+const mapDispatchToProps = (dispatch) => ({
+  signIn: (userCredentials) => dispatch(signInAsync(userCredentials)),
+});
+
+export default connect(null, mapDispatchToProps)(SignIn);

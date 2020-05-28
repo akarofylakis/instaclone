@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
 const userSchema = new Schema(
   {
@@ -18,8 +18,10 @@ const userSchema = new Schema(
       fullname: { type: String, maxlength: 55 },
       summary: { type: String, maxlength: 500 },
       avatar_url: { type: String, maxlength: 500 },
-      location_id: { type: mongoose.Types.ObjectId, ref: 'Location' },
     },
+    posts_count: { type: Number, default: 0 },
+    followers_count: { type: Number, default: 0 },
+    following_count: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

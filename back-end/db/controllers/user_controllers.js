@@ -9,11 +9,11 @@ const getUsers = getAll(User, 'password');
 const getUser = getOne(User, 'userId');
 
 const createUser = async (req, res, next) => {
-  const { email, username, password } = req.body;
+  const { email, username, password, fullname, summary, avatar_url } = req.body;
 
   let existingUser;
   try {
-    existingUser = await User.findOne({ email: email });
+    existingUser = await User.findOne({ email });
   } catch (err) {
     return next(new HttpError('Creating user failed, please try again.', 501));
   }
@@ -37,11 +37,16 @@ const createUser = async (req, res, next) => {
     email,
     username,
     password: hashedPassword,
+    user_info: {
+      fullname,
+      summary,
+      avatar_url,
+    },
   });
   try {
     await createdUser.save();
   } catch (err) {
-    return next(new HttpError('Creating user failed, please try again.', 503));
+    return next(err);
   }
 
   let token;
@@ -55,10 +60,16 @@ const createUser = async (req, res, next) => {
     return next(new HttpError('Creating user failed, please try again.', 504));
   }
 
-  res.status(201).json({
+  return res.status(201).json({
     userId: createdUser.id,
     email: createdUser.email,
     username: createdUser.username,
+    fullname: createdUser.user_info.fullname,
+    summary: createdUser.user_info.summary,
+    avatar_url: createdUser.user_info.avatar_url,
+    posts_count: createdUser.posts_count,
+    followers_count: createdUser.followers_count,
+    following_count: createdUser.following_count,
     token,
   });
 };
@@ -68,7 +79,7 @@ const signInUser = async (req, res, next) => {
 
   let existingUser;
   try {
-    existingUser = await User.findOne({ email: email });
+    existingUser = await User.findOne({ email });
   } catch (err) {
     return next(new HttpError('Signing in failed, please try again.', 422));
   }
@@ -78,7 +89,7 @@ const signInUser = async (req, res, next) => {
 
   let isValidPassword = false;
   try {
-    isValidPassword = bcrypt.compare(password, existingUser.password);
+    isValidPassword = await bcrypt.compare(password, existingUser.password);
   } catch (err) {
     return next(new HttpError('Signing in failed, please try again.', 422));
   }
@@ -100,10 +111,18 @@ const signInUser = async (req, res, next) => {
     return next(new HttpError('Signing in failed, please try again.', 500));
   }
 
-  res.status(200).json({
+  return res.status(200).json({
     userId: existingUser.id,
     email: existingUser.email,
     username: existingUser.username,
+    user_info: {
+      fullname: existingUser.fullname,
+      summary: existingUser.summary,
+      avatar_url: existingUser.avatar_url,
+    },
+    posts_count: existingUser.posts_count,
+    followers_count: existingUser.followers_count,
+    following_count: existingUser.following_count,
     token,
   });
 };

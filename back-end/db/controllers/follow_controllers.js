@@ -5,15 +5,13 @@ const User = require('../models/user');
 const Follower = require('../models/follower');
 
 const followUser = async (req, res, next) => {
-  const userId = req.params.userId;
+  const { userId } = req.params;
 
   const { followerId } = req.body;
 
-  let user;
-  user = await idGetter(User, userId, `Fetching user failed.`);
+  const user = await idGetter(User, userId, `Fetching user failed.`);
 
-  let follower;
-  follower = await idGetter(User, followerId, `Fetching user failed.`);
+  const follower = await idGetter(User, followerId, `Fetching user failed.`);
 
   if (!follower || !user) {
     return next(new HttpError('Following user failed, please try again.', 422));
@@ -26,8 +24,8 @@ const followUser = async (req, res, next) => {
   let existingFollow;
   try {
     existingFollow = await Follower.findOne({
-      follower: follower,
-      user: user,
+      follower,
+      user,
     });
   } catch (err) {
     return next(new HttpError('Following user failed, please try again.', 422));
@@ -49,23 +47,21 @@ const followUser = async (req, res, next) => {
     return next(new HttpError('Following user failed, please try again.', 500));
   }
 
-  res.status(201).json({ follow: follow.toObject({ getters: true }) });
+  return res.status(201).json({ follow: follow.toObject({ getters: true }) });
 };
 
 const unfollowUser = async (req, res, next) => {
-  const userId = req.params.userId;
+  const { userId } = req.params;
 
   const { followerId } = req.body;
 
-  let user;
-  user = await idGetter(
+  const user = await idGetter(
     User,
     userId,
     `Unfollowing user failed, please try again.`
   );
 
-  let follower;
-  follower = await idGetter(
+  const follower = await idGetter(
     User,
     followerId,
     `Unfollowing user failed, please try again.`
@@ -77,7 +73,7 @@ const unfollowUser = async (req, res, next) => {
 
   let follow;
   try {
-    follow = await Follower.findOne({ follower: follower, user: user });
+    follow = await Follower.findOne({ follower, user });
   } catch (err) {
     return next(
       new HttpError('UnFollowing user failed, please try again.', 422)
@@ -98,7 +94,7 @@ const unfollowUser = async (req, res, next) => {
     );
   }
 
-  res.status(200).json({ follow: follow.toObject({ getters: true }) });
+  return res.status(200).json({ follow: follow.toObject({ getters: true }) });
 };
 
 const acceptFollow = async (req, res, next) => {
@@ -123,15 +119,13 @@ const acceptFollow = async (req, res, next) => {
   let existingFollow;
   try {
     existingFollow = await Follower.findOne({
-      follower: follower,
-      user: user,
+      follower,
+      user,
       status: false,
     });
   } catch (err) {
     return next(new HttpError('Accepting user failed, please try again.', 500));
   }
-
-  console.log(user, follower, existingFollow);
 
   if (!existingFollow) {
     return next(new HttpError('Accepting user failed, please try again.', 500));
@@ -145,7 +139,9 @@ const acceptFollow = async (req, res, next) => {
     return next(new HttpError('Accepting user failed, please try again.', 500));
   }
 
-  res.status(201).json({ follow: existingFollow.toObject({ getters: true }) });
+  return res
+    .status(201)
+    .json({ follow: existingFollow.toObject({ getters: true }) });
 };
 
 module.exports = { followUser, unfollowUser, acceptFollow };

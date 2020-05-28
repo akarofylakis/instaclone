@@ -18,6 +18,7 @@ const SignUp = ({ signUp }) => {
     confirmPassword: '',
     fullname: '',
     summary: '',
+    avatar_url: '',
   });
   const {
     email,
@@ -26,6 +27,7 @@ const SignUp = ({ signUp }) => {
     confirmPassword,
     fullname,
     summary,
+    avatar_url,
   } = userCredentials;
 
   const handleSubmit = async (e) => {
@@ -34,7 +36,7 @@ const SignUp = ({ signUp }) => {
       alert('Passwords do not match, please try again.');
       return;
     }
-    signUp({ email, username, password });
+    signUp({ email, username, password, fullname, summary, avatar_url });
   };
 
   const changeHandler = (e) => {
@@ -90,10 +92,13 @@ const SignUp = ({ signUp }) => {
           placeholder='Add your profile summary here...'
         />
         <div className='image-upload-container'>
-          <div className='image-preview'>
-            <h6>Please pick an image</h6>
-          </div>
-          <Button secondary text='Add Avatar'></Button>
+          <Input
+            value={avatar_url}
+            onChange={changeHandler}
+            type='text'
+            name='avatar_url'
+            placeholder='Avatar URL'
+          />
         </div>
         <Button primary type='submit' text='Create Account'>
           <AddIcon />

@@ -1,59 +1,37 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+
+import {
+  selectSearchResults,
+  selectSearchIsFetching,
+} from '../../redux/users/user-selectors';
 
 import Avatar from '../../components/UI/Avatar/Avatar';
 import Button from '../../components/UI/Button/Button';
+import LoadingSpinner from '../../components/UI/LoadingSpinner/LoadingSpinner';
 
 import './Search.scss';
 
-const data = [
-  {
-    avatar:
-      'https://images.unsplash.com/photo-1502940113860-9d7391613fa7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-    username: 'loddi21__',
-    follows: 944,
-    following: 234,
-  },
-  {
-    avatar:
-      'https://images.unsplash.com/photo-1502940113860-9d7391613fa7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-    username: 'loddi21__',
-    follows: 944,
-    following: 234,
-  },
-  {
-    avatar:
-      'https://images.unsplash.com/photo-1502940113860-9d7391613fa7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-    username: 'loddi21__',
-    follows: 944,
-    following: 234,
-  },
-];
-
-const Search = () => {
-  useEffect(() => {
-    fetch('http://localhost:3000/api/v1/users')
-      .then((res) => res.json())
-      .then((res) => console.log(res));
-  });
-
+const Search = ({ searchResults, searchIsFetching }) => {
   return (
     <div className='search'>
       <ul className='search-list'>
-        {data.map((item) => (
-          <li className='search-item'>
-            <Avatar size={60} source={item.avatar} />
+        {searchIsFetching && <LoadingSpinner />}
+        {searchResults.map((item) => (
+          <li key={item.id} className='search-item'>
+            <Avatar size={60} source={item.user_info.avatar_url} />
             <div className='search-item__user-info'>
-              <h3 className='name'> Joshua Roberts </h3>
+              <h3 className='name'>{item.user_info.fullname}</h3>
               <h3 className='username'> {item.username} </h3>
             </div>
             <div className='search-item__user-follows'>
-              <h3> Followers: {item.follows} </h3>
-              <h3> Following: {item.following} </h3>
-              <h3> Posts: {item.following} </h3>
+              <h3>Followers: {item.followers_count} </h3>
+              <h3>Following: {item.following_count} </h3>
+              <h3>Posts: {item.posts_count} </h3>
             </div>
-            <div className='  search-item__user-cta'>
-              <Link to='/user'>
+            <div className='search-item__user-cta'>
+              <Link to={`/user/${item.id}`}>
                 <Button text='Show Profile' secondary />
               </Link>
               <Button text='Follow' primary>
@@ -70,4 +48,9 @@ const Search = () => {
   );
 };
 
-export default Search;
+const mapStateToProps = (state) => ({
+  searchResults: selectSearchResults(state),
+  searchIsFetching: selectSearchIsFetching(state),
+});
+
+export default connect(mapStateToProps)(Search);

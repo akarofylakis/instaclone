@@ -3,7 +3,7 @@ import {
   BrowserRouter as Router,
   Route,
   Switch,
-  withRouter,
+  Redirect,
 } from 'react-router-dom';
 
 import Header from '../../UI/Header/Header';
@@ -28,15 +28,16 @@ const SignedIn = () => {
               <StoryFeed />
               <HomeFeed />
             </Route>
-            <Route path={`/user`} exact>
+            <Route path={`/user/:userId`}>
               <User />
             </Route>
-            <Route path={`/post`} exact>
+            <Route path={`/post/:postId`}>
               <Post />
             </Route>
             <Route path={`/search`} exact>
               <Search />
             </Route>
+            <Route render={() => <Redirect to='/' />} />
           </Switch>
         </Content>
       </div>
@@ -45,4 +46,4 @@ const SignedIn = () => {
   );
 };
 
-export default withRouter(SignedIn);
+export default SignedIn;

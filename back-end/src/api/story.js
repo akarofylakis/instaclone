@@ -1,21 +1,23 @@
-const express = require("express");
+const express = require('express');
 
 const {
+  getStories,
   getStory,
   getUserStories,
   getStoriesFeed,
   createStory,
   deleteStory,
-} = require("../../db/controllers/story_controllers");
+} = require('../../db/controllers/story_controllers');
 
 const router = express.Router();
 
-router.get("/:storyId", getStory);
-router.get("/user/:userId/stories", getUserStories);
-router.get("/feed/:userId", getStoriesFeed);
+router.get('/', getStories);
+router.get('/:storyId', getStory);
+router.get('/user/:userId/stories', getUserStories);
+router.get('/feed/:userId', getStoriesFeed);
 
-router.delete("/:storyId/delete", deleteStory);
+router.delete('/:storyId/delete', deleteStory);
 
-router.post("/create", createStory);
+router.post('/create', createStory);
 
 module.exports = router;

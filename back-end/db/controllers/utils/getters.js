@@ -16,18 +16,29 @@ const getAll = (collection, exclude) => {
     } catch (err) {
       return next(new HttpError(`Fetching data failed.`, 500));
     }
-    res.json({
-      data: data.map((document) => document.toObject({ getters: true })),
+
+    const dataWithUser = await Promise.all(
+      data.map(async (document) => {
+        if (document.user) {
+          document.user = await User.findById(document.user);
+        }
+        return document;
+      })
+    );
+
+    return res.json({
+      data: dataWithUser.map((document) =>
+        document.toObject({ getters: true })
+      ),
     });
   };
 };
 
 const getAllByUser = (collection, exclude) => {
   return async (req, res, next) => {
-    const userId = req.params.userId;
+    const { userId } = req.params;
 
-    let user;
-    user = await idGetter(User, userId, `Fetching user failed.`);
+    const user = await idGetter(User, userId, `Fetching user failed.`);
 
     if (!user) {
       return next(new HttpError(`Fetching data failed.`, 422));
@@ -36,14 +47,14 @@ const getAllByUser = (collection, exclude) => {
     let data;
     try {
       if (exclude) {
-        data = await collection.find({ user: user }, `-${exclude}`);
+        data = await collection.find({ user }, `-${exclude}`);
       } else {
-        data = await collection.find({ user: user });
+        data = await collection.find({ user });
       }
     } catch (err) {
       return next(new HttpError(`Fetching data failed.`, 500));
     }
-    res.json({
+    return res.json({
       data: data.map((document) => document.toObject({ getters: true })),
     });
   };
@@ -53,14 +64,15 @@ const getOne = (collection, param) => {
   return async (req, res, next) => {
     const id = req.params[param];
 
-    let data;
-    data = await idGetter(collection, id, `Fetching data failed.`);
+    const data = await idGetter(collection, id, `Fetching data failed.`);
 
     if (!data) {
       return next(new HttpError(`Fetching data failed.`, 422));
     }
 
-    res.json({
+    data.user = await User.findById(data.user);
+
+    return res.json({
       data: data.toObject({ getters: true }),
     });
   };
@@ -68,10 +80,9 @@ const getOne = (collection, param) => {
 
 const getFeed = (collection) => {
   return async (req, res, next) => {
-    const userId = req.params.userId;
+    const { userId } = req.params;
 
-    let user;
-    user = await idGetter(User, userId, `Fetching user failed.`);
+    const user = await idGetter(User, userId, `Fetching user failed.`);
 
     let following;
     try {
@@ -80,7 +91,7 @@ const getFeed = (collection) => {
       return next(new HttpError(`Fetching data failed.`, 500));
     }
 
-    let feed = await following.reduce(async (accum, userFollowing) => {
+    const feed = await following.reduce(async (accum, userFollowing) => {
       const current = await accum;
       let userData;
       try {
@@ -98,9 +109,13 @@ const getFeed = (collection) => {
       return current;
     }, []);
 
-    res.json({
-      feed: feed[0].map((document) => document.toObject({ getters: true })),
-    });
+    try {
+      res.json({
+        feed: feed[0].map((document) => document.toObject({ getters: true })),
+      });
+    } catch (e) {
+      return next(new HttpError(`Fetching data failed.`, 500));
+    }
   };
 };
 

@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+
+import { searchUsersAsync } from '../../../redux/users/user-actions';
 
 import Input from '../Input/Input';
 import Button from '../Button/Button';
@@ -10,17 +13,54 @@ import SearchIcon from '../../../img/icons/Search';
 
 import './Header.scss';
 
-const Header = () => {
+const Header = ({ searchUsers }) => {
+  const [searchString, setSearchString] = useState('');
+  const [modalStatus, toggleModal] = useState(false);
+
+  const handleSubmit = async (e) => {
+    searchUsers(searchString);
+  };
+
+  const changeHandler = (e) => {
+    const { value } = e.target;
+    setSearchString(value);
+  };
+
+  const modalOpener = () => {
+    toggleModal(true);
+  };
+
+  const modalCloser = () => {
+    toggleModal(false);
+  };
+
+  const modalToggle = (e) => {
+    if (e.target.className) {
+      if (
+        e.target.className.includes('backdrop') ||
+        e.target.className.includes('modal-close')
+      ) {
+        toggleModal((prevState) => !prevState);
+      }
+    }
+  };
+
   return (
     <header>
-      <Backdrop>
-        <AddModal />
+      <Backdrop onClick={modalToggle} show={modalStatus}>
+        <AddModal forceCloseModal={modalCloser} toggleModal={modalToggle} />
       </Backdrop>
       <div className='inner-container'>
         <div className='input-container'>
-          <Input type='search' placeholder='Who are you looking for?' />
-          <Link to='search'>
-            <button className='search-btn'>
+          <Input
+            name='search'
+            onChange={changeHandler}
+            value={searchString}
+            type='search'
+            placeholder='Who are you looking for?'
+          />
+          <Link to='/search'>
+            <button className='search-btn' onClick={handleSubmit}>
               <SearchIcon />
             </button>
           </Link>
@@ -37,7 +77,7 @@ const Header = () => {
               </Link>
             </li>
             <li>
-              <Button primary text='Upload'>
+              <Button onClick={modalOpener} primary text='Upload'>
                 <AddIcon />
               </Button>
             </li>
@@ -48,4 +88,8 @@ const Header = () => {
   );
 };
 
-export default Header;
+const mapDispatchToProps = (dispatch) => ({
+  searchUsers: (searchString) => dispatch(searchUsersAsync(searchString)),
+});
+
+export default connect(null, mapDispatchToProps)(Header);
