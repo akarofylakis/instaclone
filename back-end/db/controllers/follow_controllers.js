@@ -47,6 +47,18 @@ const followUser = async (req, res, next) => {
     return next(new HttpError('Following user failed, please try again.', 500));
   }
 
+  const currentFollowing = follower.following_count;
+  const currentFollowers = user.followers_count;
+  follower.following_count = currentFollowing + 1;
+  user.followers_count = currentFollowers + 1;
+
+  try {
+    await user.save();
+    await follower.save();
+  } catch (err) {
+    return next(new HttpError('Creating post failed, please try again.', 422));
+  }
+
   return res.status(201).json({ follow: follow.toObject({ getters: true }) });
 };
 
@@ -92,6 +104,18 @@ const unfollowUser = async (req, res, next) => {
     return next(
       new HttpError('UnFollowing user failed, please try again.', 500)
     );
+  }
+
+  const currentFollowing = follower.following_count;
+  const currentFollowers = user.followers_count;
+  follower.following_count = currentFollowing - 1;
+  user.followers_count = currentFollowers - 1;
+
+  try {
+    await user.save();
+    await follower.save();
+  } catch (err) {
+    return next(new HttpError('Creating post failed, please try again.', 422));
   }
 
   return res.status(200).json({ follow: follow.toObject({ getters: true }) });

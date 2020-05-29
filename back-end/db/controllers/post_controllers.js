@@ -27,6 +27,15 @@ const createPost = async (req, res, next) => {
     return next(new HttpError('Creating post failed, please try again.', 422));
   }
 
+  const currentPosts = user.posts_count;
+  user.posts_count = currentPosts + 1;
+
+  try {
+    await user.save();
+  } catch (err) {
+    return next(new HttpError('Creating post failed, please try again.', 422));
+  }
+
   return res
     .status(201)
     .json({ createdPost: createdPost.toObject({ getters: true }) });

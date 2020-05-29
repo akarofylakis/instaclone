@@ -59,6 +59,11 @@ const userReducer = (state = INITIAL_STATE, action) => {
         searchResults: action.payload,
         isFetching: false,
       };
+    case UserActionTypes.UPDATE_CURRENT_USER:
+      return {
+        ...state,
+        currentUser: action.payload,
+      };
     default:
       return state;
   }

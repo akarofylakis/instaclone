@@ -83,38 +83,58 @@ const getFeed = (collection) => {
     const { userId } = req.params;
 
     const user = await idGetter(User, userId, `Fetching user failed.`);
+    let ownPosts;
 
-    let following;
     try {
-      following = await Follow.find({ follower: user, status: true });
+      ownPosts = await collection.find({
+        user,
+      });
     } catch (err) {
       return next(new HttpError(`Fetching data failed.`, 500));
     }
 
-    const feed = await following.reduce(async (accum, userFollowing) => {
-      const current = await accum;
+    let following;
+    try {
+      following = await Follow.find({ follower: user, status: false });
+    } catch (err) {
+      return next(new HttpError(`Fetching data failed.`, 500));
+    }
+
+    let feed = await following.reduce(async (accum, userFollowing) => {
       let userData;
+
       try {
         userData = await collection.find({
           user: userFollowing.user,
         });
       } catch (err) {
-        return next(new HttpError(`Fetching data failed.`, 500));
+        return next(new HttpError(`Fetching data failed.`, 502));
       }
 
       if (userData) {
-        current.push(userData);
+        return userData;
       }
-
-      return current;
     }, []);
+
+    feed = feed.concat(ownPosts);
+
+    const feedWithUser = await Promise.all(
+      feed.map(async (document) => {
+        if (document.user) {
+          document.user = await User.findById(document.user);
+        }
+        return document;
+      })
+    );
 
     try {
       res.json({
-        feed: feed[0].map((document) => document.toObject({ getters: true })),
+        feed: feedWithUser.map((document) =>
+          document.toObject({ getters: true })
+        ),
       });
     } catch (e) {
-      return next(new HttpError(`Fetching data failed.`, 500));
+      return next(new HttpError(`Fetching data failed.`, 503));
     }
   };
 };

@@ -65,6 +65,10 @@
         width: 45px;
         cursor: pointer;
       }
+
+      .show-off {
+        display: none;
+      }
     }
     .post__post-info .likes,
     .post__post-info .comments {
@@ -74,6 +78,10 @@
       img {
         width: 20px;
         margin-right: 5px;
+        cursor: pointer;
+        &.show-off {
+          display: none;
+        }
       }
 
       h6 {

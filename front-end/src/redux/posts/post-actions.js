@@ -14,14 +14,14 @@ export const fetchPostsSuccess = (posts) => ({
   payload: posts,
 });
 
-export const fetchPostsAsync = () => {
+export const fetchPostsAsync = (userId) => {
   return (dispatch) => {
     dispatch(fetchPostsStart());
 
-    return fetch(`${process.env.REACT_APP_API_URL}/posts`)
+    return fetch(`${process.env.REACT_APP_API_URL}/posts/feed/${userId}`)
       .then((res) => res.json())
       .then((json) => {
-        dispatch(fetchPostsSuccess(json.data));
+        dispatch(fetchPostsSuccess(json.feed));
       })
       .catch((e) => dispatch(fetchPostsFailure(e.message)));
   };

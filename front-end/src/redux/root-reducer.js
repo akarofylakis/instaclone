@@ -6,6 +6,7 @@ import userReducer from './users/user-reducers';
 import postReducer from './posts/post-reducers';
 import storyReducer from './stories/story-reducers';
 import likeReducer from './likes/like-reducers';
+import followReducer from './follows/follow-reducers';
 
 const persistConfig = {
   key: 'root',
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   post: postReducer,
   story: storyReducer,
   like: likeReducer,
+  follow: followReducer,
 });
 
 export default persistReducer(persistConfig, rootReducer);

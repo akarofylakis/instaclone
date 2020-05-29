@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 const selectPost = (state) => state.post;
 
 export const selectPosts = createSelector([selectPost], (posts) =>
-  posts ? posts.posts : null
+  posts ? posts.posts : []
 );
 
 export const selectCurrentPost = createSelector([selectPost], (posts) =>
@@ -11,7 +11,7 @@ export const selectCurrentPost = createSelector([selectPost], (posts) =>
 );
 
 export const selectUserPosts = createSelector([selectPost], (posts) =>
-  posts ? posts.userPosts : null
+  posts ? posts.userPosts : []
 );
 
 export const selectPostsIsFetching = createSelector(

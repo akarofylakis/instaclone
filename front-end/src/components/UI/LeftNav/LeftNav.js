@@ -3,14 +3,31 @@ import { connect } from 'react-redux';
 import { Link, NavLink } from 'react-router-dom';
 
 import { selectCurrentUser } from '../../../redux/users/user-selectors';
-
 import { signOutAsync } from '../../../redux/users/user-actions';
 
 import Avatar from '../Avatar/Avatar';
 
 import './LeftNav.scss';
 
+const DEFAULT_USER = {
+  avatar_url: '',
+  userId: '',
+  email: '',
+  posts_count: 0,
+  followers_count: 0,
+  following_count: 0,
+  username: '',
+  fullname: '',
+  id: '',
+  summary: '',
+  token: '',
+};
+
 const LeftNav = ({ currentUser, signOut }) => {
+  if (!currentUser) {
+    currentUser = DEFAULT_USER;
+  }
+
   return (
     <React.Fragment>
       <nav className='leftNav'>

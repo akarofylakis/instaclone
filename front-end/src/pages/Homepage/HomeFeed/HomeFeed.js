@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import { fetchPostsAsync } from '../../../redux/posts/post-actions';
 import { fetchUserLikesAsync } from '../../../redux/likes/like-actions';
+
 import {
   selectPosts,
   selectPostsIsFetching,
@@ -15,6 +16,38 @@ import LoadingSpinner from '../../../components/UI/LoadingSpinner/LoadingSpinner
 
 import './HomeFeed.scss';
 
+const DEFAULT_USER = {
+  avatar_url: '',
+  userId: '',
+  email: '',
+  posts_count: 0,
+  followers_count: 0,
+  following_count: 0,
+  username: '',
+  fullname: '',
+  id: '',
+  summary: '',
+  token: '',
+};
+
+const DEFAULT_POSTS = [
+  {
+    image_url: '',
+    caption: '',
+    createdAt: '',
+    likes_count: 0,
+    comments_count: 0,
+    user: {
+      username: '',
+      id: '',
+      user_info: {
+        avatar_url: 'dsfafdsafadsfads',
+        summary: '',
+      },
+    },
+  },
+];
+
 const HomeFeed = ({
   fetchPosts,
   posts,
@@ -23,8 +56,16 @@ const HomeFeed = ({
   fetchUserLikes,
   currentUser,
 }) => {
+  if (!currentUser) {
+    currentUser = DEFAULT_USER;
+  }
+
+  if (!userLikes) {
+    userLikes = [];
+  }
+
   useEffect(() => {
-    fetchPosts();
+    fetchPosts(currentUser.userId);
     fetchUserLikes(currentUser.userId);
   }, [fetchPosts, fetchUserLikes, currentUser.userId]);
 
@@ -58,7 +99,7 @@ const HomeFeed = ({
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchPosts: () => dispatch(fetchPostsAsync()),
+  fetchPosts: (userId) => dispatch(fetchPostsAsync(userId)),
   fetchUserLikes: (userId) => dispatch(fetchUserLikesAsync(userId)),
 });
 
