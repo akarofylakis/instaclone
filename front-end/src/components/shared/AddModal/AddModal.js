@@ -46,8 +46,11 @@ const AddModal = ({
 
       <form className='add-form' onSubmit={handleSubmit}>
         <div className='image-upload-container'>
-          <div className='image-preview'>
-            <h6>Image Preview</h6>
+          <div
+            className='image-preview'
+            style={{ backgroundImage: `url(${post.imageUrl})` }}
+          >
+            {!post.imageUrl && <h6>Image Preview</h6>}
           </div>
           <Input
             onChange={changeHandler}
