@@ -2,6 +2,7 @@ const HttpError = require('../../../src/utils/HttpError');
 const { idGetter } = require('./snippets');
 
 const User = require('../../models/user');
+const Post = require('../../models/post');
 const Follow = require('../../models/follower');
 
 const getAll = (collection, exclude) => {
@@ -34,7 +35,7 @@ const getAll = (collection, exclude) => {
   };
 };
 
-const getAllByUser = (collection, exclude) => {
+const getAllByUser = (collection, exclude, customUserField) => {
   return async (req, res, next) => {
     const { userId } = req.params;
 
@@ -47,15 +48,60 @@ const getAllByUser = (collection, exclude) => {
     let data;
     try {
       if (exclude) {
-        data = await collection.find({ user }, `-${exclude}`);
+        if (customUserField) {
+          data = await collection.find(
+            { [customUserField]: user },
+            `-${exclude}`
+          );
+        } else {
+          data = await collection.find({ user }, `-${exclude}`);
+        }
       } else {
-        data = await collection.find({ user });
+        if (customUserField) {
+          data = await collection.find({ [customUserField]: user });
+        } else {
+          data = await collection.find({ user });
+        }
       }
     } catch (err) {
       return next(new HttpError(`Fetching data failed.`, 500));
     }
     return res.json({
       data: data.map((document) => document.toObject({ getters: true })),
+    });
+  };
+};
+
+const getAllByPost = (collection) => {
+  return async (req, res, next) => {
+    const { postId } = req.params;
+
+    const post = await idGetter(Post, postId, `Fetching user failed.`);
+
+    if (!post) {
+      return next(new HttpError(`Fetching data failed.`, 422));
+    }
+
+    let data;
+    try {
+      data = await collection.find({ post });
+    } catch (err) {
+      return next(new HttpError(`Fetching data failed.`, 500));
+    }
+
+    const dataWithUser = await Promise.all(
+      data.map(async (document) => {
+        if (document.user) {
+          document.user = await User.findById(document.user);
+        }
+        return document;
+      })
+    );
+
+    return res.json({
+      data: dataWithUser.map((document) =>
+        document.toObject({ getters: true })
+      ),
     });
   };
 };
@@ -139,4 +185,4 @@ const getFeed = (collection) => {
   };
 };
 
-module.exports = { getAll, getOne, getAllByUser, getFeed };
+module.exports = { getAll, getOne, getAllByUser, getFeed, getAllByPost };

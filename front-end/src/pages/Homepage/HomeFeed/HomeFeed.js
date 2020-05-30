@@ -41,7 +41,7 @@ const DEFAULT_POSTS = [
       username: '',
       id: '',
       user_info: {
-        avatar_url: 'dsfafdsafadsfads',
+        avatar_url: 'defaulturl.com',
         summary: '',
       },
     },
@@ -69,29 +69,37 @@ const HomeFeed = ({
     fetchUserLikes(currentUser.userId);
   }, [fetchPosts, fetchUserLikes, currentUser.userId]);
 
+  if (!posts) {
+    posts = DEFAULT_POSTS;
+  }
+
   return (
     <div className='homeFeed'>
       <h2>Feed</h2>
       <div className='list-container'>
         {postsIsFetching && <LoadingSpinner />}
         <ul className='feed-list'>
-          {posts.map((post) => (
-            <Item
-              key={post.id}
-              postId={post.id}
-              source={post.image_url}
-              likes={post.likes_count}
-              comments={post.comments_count}
-              userAvatar={post.user.user_info.avatar_url}
-              userId={post.user.id}
-              username={post.user.username}
-              likedByCurrentUser={
-                userLikes.filter((userLike) => userLike.post === post.id)[0]
-                  ? true
-                  : false
-              }
-            />
-          ))}
+          {posts[0] ? (
+            posts.map((post) => (
+              <Item
+                key={post.id}
+                postId={post.id}
+                source={post.image_url}
+                likes={post.likes_count}
+                comments={post.comments_count}
+                userAvatar={post.user.user_info.avatar_url}
+                userId={post.user.id}
+                username={post.user.username}
+                likedByCurrentUser={
+                  userLikes.filter((userLike) => userLike.post === post.id)[0]
+                    ? true
+                    : false
+                }
+              />
+            ))
+          ) : (
+            <h5>No posts</h5>
+          )}
         </ul>
       </div>
     </div>

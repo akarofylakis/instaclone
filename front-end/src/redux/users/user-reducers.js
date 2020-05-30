@@ -2,6 +2,7 @@ import UserActionTypes from './user-types';
 
 const INITIAL_STATE = {
   currentUser: null,
+  user: null,
   searchResults: [],
   isFetching: false,
   error: null,
@@ -59,10 +60,10 @@ const userReducer = (state = INITIAL_STATE, action) => {
         searchResults: action.payload,
         isFetching: false,
       };
-    case UserActionTypes.UPDATE_CURRENT_USER:
+    case UserActionTypes.FETCH_USER:
       return {
         ...state,
-        currentUser: action.payload,
+        user: action.payload,
       };
     default:
       return state;

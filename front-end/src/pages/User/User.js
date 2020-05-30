@@ -2,18 +2,24 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
-import { selectCurrentUser } from '../../redux/users/user-selectors';
+import {
+  selectCurrentUser,
+  selectUserProfile,
+} from '../../redux/users/user-selectors';
 import {
   selectUserPosts,
   selectPostsIsFetching,
 } from '../../redux/posts/post-selectors';
 import { selectUserLikes } from '../../redux/likes/like-selectors';
+import { selectUserFollows } from '../../redux/follows/follow-selectors';
 
 import { fetchUserLikesAsync } from '../../redux/likes/like-actions';
+import { fetchUserAsync } from '../../redux/users/user-actions';
 import { fetchUserPostsAsync } from '../../redux/posts/post-actions';
 import {
   followUserAsync,
   unfollowUserAsync,
+  fetchFollowsAsync,
 } from '../../redux/follows/follow-actions';
 
 import Item from '../../components/UI/Item/Item';
@@ -40,15 +46,24 @@ const DEFAULT_USER = {
 const User = ({
   match,
   currentUser,
+  userProfile,
   userPosts,
   postsIsFetching,
   fetchUserPosts,
   userLikes,
   fetchUserLikes,
+  fetchUser,
   followUser,
   unfollowUser,
-  followedByUser,
+  fetchFollows,
+  userFollows,
 }) => {
+  console.log(userFollows);
+  const followedByUser = userFollows.filter(
+    (follow) => follow.user === match.params.userId
+  )[0]
+    ? true
+    : false;
   const [followStatus, toggleFollow] = useState(followedByUser);
 
   if (!currentUser) {
@@ -60,8 +75,17 @@ const User = ({
 
   useEffect(() => {
     fetchUserPosts(match.params.userId);
+    fetchUser(match.params.userId);
     fetchUserLikes(currentUser.userId);
-  }, [fetchUserPosts, fetchUserLikes, match.params.userId, currentUser.userId]);
+    fetchFollows(currentUser.userId);
+  }, [
+    fetchUserPosts,
+    fetchUserLikes,
+    fetchFollows,
+    fetchUser,
+    match.params.userId,
+    currentUser.userId,
+  ]);
 
   if (!userPosts) {
     userPosts = [];
@@ -81,9 +105,9 @@ const User = ({
   return (
     <div className='user'>
       <div className='user__profile-container'>
-        <Avatar size={100} source={currentUser.avatar_url} />
-        <h3>{currentUser.fullname}</h3>
-        <h6>{currentUser.username}</h6>
+        <Avatar size={100} source={userProfile.user_info.avatar_url} />
+        <h3>{userProfile.user_info.fullname}</h3>
+        <h6>{userProfile.username}</h6>
         {currentUser.userId !== match.params.userId && (
           <div className='button-container'>
             <Button
@@ -108,35 +132,39 @@ const User = ({
       </div>
       <div className='user__user-info-container'>
         <div className='user__user-info-posts'>
-          <h5>{currentUser.posts_count}</h5> <h6>Posts</h6>
+          <h5>{userProfile.posts_count}</h5> <h6>Posts</h6>
         </div>
         <div className='user__user-info-followers'>
-          <h5>{currentUser.followers_count}</h5> <h6>Followers</h6>
+          <h5>{userProfile.followers_count}</h5> <h6>Followers</h6>
         </div>
         <div className='user__user-info-following'>
-          <h5>{currentUser.following_count}</h5> <h6>Following</h6>
+          <h5>{userProfile.following_count}</h5> <h6>Following</h6>
         </div>
       </div>
       <div className='user__user-summary'>
-        <h5>{currentUser.summary}</h5>
+        <h5>{userProfile.user_info.summary}</h5>
       </div>
       <div className='list-container'>
         {postsIsFetching && <LoadingSpinner />}
         <ul className='feed-list'>
-          {userPosts.map((post) => (
-            <Item
-              key={post.id}
-              postId={post.id}
-              source={post.image_url}
-              likes={post.likes_count}
-              comments={post.comments_count}
-              likedByCurrentUser={
-                userLikes.filter((userLike) => userLike.post === post.id)[0]
-                  ? true
-                  : false
-              }
-            />
-          ))}
+          {userPosts[0] ? (
+            userPosts.map((post) => (
+              <Item
+                key={post.id}
+                postId={post.id}
+                source={post.image_url}
+                likes={post.likes_count}
+                comments={post.comments_count}
+                likedByCurrentUser={
+                  userLikes.filter((userLike) => userLike.post === post.id)[0]
+                    ? true
+                    : false
+                }
+              />
+            ))
+          ) : (
+            <h5>No posts</h5>
+          )}
         </ul>
       </div>
     </div>
@@ -144,8 +172,10 @@ const User = ({
 };
 
 const mapDispatchToProps = (dispatch) => ({
+  fetchUser: (userId) => dispatch(fetchUserAsync(userId)),
   fetchUserPosts: (userId) => dispatch(fetchUserPostsAsync(userId)),
   fetchUserLikes: (userId) => dispatch(fetchUserLikesAsync(userId)),
+  fetchFollows: (userId) => dispatch(fetchFollowsAsync(userId)),
   followUser: (userIdToFollow, userId) =>
     dispatch(followUserAsync(userIdToFollow, userId)),
   unfollowUser: (userIdToUnfollow, userId) =>
@@ -154,7 +184,9 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => ({
   currentUser: selectCurrentUser(state),
+  userProfile: selectUserProfile(state),
   userPosts: selectUserPosts(state),
+  userFollows: selectUserFollows(state),
   postsIsFetching: selectPostsIsFetching(state),
   userLikes: selectUserLikes(state),
 });

@@ -7,6 +7,11 @@ export const selectCurrentUser = createSelector(
   (user) => user.currentUser
 );
 
+export const selectUserProfile = createSelector(
+  [selectUser],
+  (user) => user.user
+);
+
 export const selectSearchResults = createSelector(
   [selectUser],
   (user) => user.searchResults

@@ -16,6 +16,11 @@ const followReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
       };
+    case FollowActionTypes.FETCH_FOLLOWS_SUCESS:
+      return {
+        ...state,
+        following: action.payload,
+      };
     default:
       return state;
   }

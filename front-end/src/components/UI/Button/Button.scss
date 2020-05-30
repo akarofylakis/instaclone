@@ -29,6 +29,10 @@
     #2bb673
   );
   box-shadow: 0 2px 5px 0 rgba(23, 168, 108, 0.75);
+
+  &[name='add-comment'] {
+    box-shadow: 0 0px 0px 0 rgba(23, 168, 108, 0.75);
+  }
 }
 
 .btn--google {

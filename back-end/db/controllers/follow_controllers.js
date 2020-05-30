@@ -1,8 +1,11 @@
 const HttpError = require('../../src/utils/HttpError');
 const { idGetter } = require('./utils/snippets');
+const { getAllByUser } = require('./utils/getters');
 
 const User = require('../models/user');
 const Follower = require('../models/follower');
+
+const getUserFollows = getAllByUser(Follower, null, 'follower');
 
 const followUser = async (req, res, next) => {
   const { userId } = req.params;
@@ -168,4 +171,4 @@ const acceptFollow = async (req, res, next) => {
     .json({ follow: existingFollow.toObject({ getters: true }) });
 };
 
-module.exports = { followUser, unfollowUser, acceptFollow };
+module.exports = { followUser, unfollowUser, acceptFollow, getUserFollows };

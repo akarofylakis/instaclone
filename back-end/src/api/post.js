@@ -19,6 +19,7 @@ const {
   commentPost,
   updateComment,
   deleteComment,
+  getPostComments,
 } = require('../../db/controllers/comment_controllers');
 
 const router = express.Router();
@@ -26,6 +27,7 @@ const router = express.Router();
 router.get('/', getPosts);
 router.get('/feed/:userId', getPostsFeed);
 router.get('/user/:userId/posts', getUserPosts);
+router.get('/:postId/comments', getPostComments);
 router.get('/:postId', getPost);
 
 router.put('/:postId/update', updatePost);

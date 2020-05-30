@@ -45,3 +45,18 @@ export const unfollowUserAsync = (userIdToUnfollow, followerId) => {
       });
   };
 };
+
+export const fetchFollowsSuccess = (follows) => ({
+  type: FollowActionTypes.FETCH_FOLLOWS_SUCESS,
+  payload: follows,
+});
+
+export const fetchFollowsAsync = (userId) => {
+  return (dispatch) => {
+    return fetch(`${process.env.REACT_APP_API_URL}/follows/${userId}/follows`)
+      .then((res) => res.json())
+      .then((json) => {
+        dispatch(fetchFollowsSuccess(json.data));
+      });
+  };
+};

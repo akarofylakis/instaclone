@@ -1,5 +1,3 @@
-const HttpError = require('../../../src/utils/HttpError');
-
 const idGetter = async (collection, id, errorMessage) => {
   let instance;
   try {

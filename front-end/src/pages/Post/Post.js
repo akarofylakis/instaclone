@@ -6,13 +6,24 @@ import timeSince from '../../services/formatDate';
 
 import { selectCurrentUser } from '../../redux/users/user-selectors';
 import { selectCurrentPost } from '../../redux/posts/post-selectors';
+import {
+  selectPostComments,
+  selectCurrentComment,
+} from '../../redux/comments/comment-selectors';
+
 import { fetchPostAsync } from '../../redux/posts/post-actions';
 import { likePostAsync, unlikePostAsync } from '../../redux/likes/like-actions';
+import {
+  fetchPostCommentsAsync,
+  createCommentAsync,
+  deleteCommentAsync,
+} from '../../redux/comments/comment-actions';
 
 import { selectUserLikes } from '../../redux/likes/like-selectors';
 
 import Avatar from '../../components/UI/Avatar/Avatar';
 import Button from '../../components/UI/Button/Button';
+import Input from '../../components/UI/Input/Input';
 
 import './Post.scss';
 
@@ -41,6 +52,11 @@ const Post = ({
   likePost,
   unlikePost,
   userLikes,
+  currentComment,
+  postComments,
+  fetchPostComments,
+  createComment,
+  deleteComment,
 }) => {
   const likedByCurrentUser = userLikes.filter(
     (userLike) => userLike.post === post.id
@@ -49,6 +65,7 @@ const Post = ({
     : false;
 
   const [likeStatus, toggleLike] = useState(likedByCurrentUser);
+  const [comment, setComment] = useState('');
   const [currentLikes, mutateLikes] = useState(post.likes_count);
 
   if (!post) {
@@ -57,9 +74,16 @@ const Post = ({
 
   useEffect(() => {
     fetchPost(match.params.postId);
+    fetchPostComments(match.params.postId);
     toggleLike(likedByCurrentUser);
     mutateLikes(post.likes_count);
-  }, [fetchPost, match.params.postId, post.likes_count, likedByCurrentUser]);
+  }, [
+    fetchPost,
+    fetchPostComments,
+    match.params.postId,
+    post.likes_count,
+    likedByCurrentUser,
+  ]);
 
   const likeToggler = () => {
     toggleLike((prevState) => {
@@ -72,6 +96,15 @@ const Post = ({
       }
       return !prevState;
     });
+  };
+
+  const commentHandler = (e) => {
+    setComment(e.target.value);
+  };
+
+  const onCommentSubmit = () => {
+    createComment(match.params.postId, currentUser.userId, comment);
+    setComment('');
   };
 
   return (
@@ -147,25 +180,35 @@ const Post = ({
 
       <div className='post__post-comments'>
         <ul className='post__post-comments-list'>
-          <li>
-            <Link to='/user'>
-              <h6 className='comment-user'>amanjonae_</h6>
-            </Link>
-            <h6 className='comment-body'>Great!!</h6>
-          </li>
-          <li>
-            <Link to='/user'>
-              <h6 className='comment-user'>amanjonae_</h6>
-            </Link>
-            <h6 className='comment-body'>Great!!</h6>
-          </li>
-          <li>
-            <Link to='/user'>
-              <h6 className='comment-user'>amanjonae_</h6>
-            </Link>
-            <h6 className='comment-body'>Great!!</h6>
-          </li>
+          {postComments[0] ? (
+            postComments.map((comment) => (
+              <li>
+                <Link to={`/user/${comment.user.id}`}>
+                  <h6 className='comment-user'>{comment.user.username}</h6>
+                </Link>
+                <h6 className='comment-body'>{comment.body}</h6>
+              </li>
+            ))
+          ) : (
+            <h5>No comments</h5>
+          )}
         </ul>
+
+        <div className='add-comment--container'>
+          <Input
+            onChange={commentHandler}
+            type='text'
+            name='comment'
+            value={comment}
+            placeholder='Add a comment..'
+          />
+          <Button
+            name='add-comment'
+            primary
+            onClick={onCommentSubmit}
+            text='Submit'
+          ></Button>
+        </div>
       </div>
     </div>
   );
@@ -175,12 +218,19 @@ const mapDispatchToProps = (dispatch) => ({
   fetchPost: (postId) => dispatch(fetchPostAsync(postId)),
   likePost: (postId, userId) => dispatch(likePostAsync(postId, userId)),
   unlikePost: (postId, userId) => dispatch(unlikePostAsync(postId, userId)),
+  createComment: (postId, userId, body) =>
+    dispatch(createCommentAsync(postId, userId, body)),
+  deleteComment: (postId, commentId, userId) =>
+    dispatch(deleteCommentAsync(postId, commentId, userId)),
+  fetchPostComments: (postId) => dispatch(fetchPostCommentsAsync(postId)),
 });
 
 const mapStateToProps = (state) => ({
   currentUser: selectCurrentUser(state),
   post: selectCurrentPost(state),
   userLikes: selectUserLikes(state),
+  postComments: selectPostComments(state),
+  currentComment: selectCurrentComment(state),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Post));

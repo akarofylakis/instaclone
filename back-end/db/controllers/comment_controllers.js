@@ -1,9 +1,12 @@
 const HttpError = require('../../src/utils/HttpError');
 const { idGetter } = require('./utils/snippets');
+const { getAllByPost } = require('./utils/getters');
 
 const Post = require('../models/post');
 const User = require('../models/user');
 const Comment = require('../models/comment');
+
+const getPostComments = getAllByPost(Comment);
 
 const commentPost = async (req, res, next) => {
   const { postId } = req.params;
@@ -75,7 +78,7 @@ const updateComment = async (req, res, next) => {
 
 const deleteComment = async (req, res, next) => {
   const { commentId } = req.params;
-  const { postId } = req.body;
+  const { postId, userId } = req.body;
 
   const comment = await idGetter(
     Comment,
@@ -92,6 +95,12 @@ const deleteComment = async (req, res, next) => {
   if (!comment) {
     return next(
       new HttpError('Deleting comment failed, please try again.', 422)
+    );
+  }
+
+  if (new String(userId).valueOf() !== new String(comment.user).valueOf()) {
+    return next(
+      new HttpError('Deleting comment failed, please try again.', 423)
     );
   }
 
@@ -114,4 +123,4 @@ const deleteComment = async (req, res, next) => {
   return res.status(200).json({ comment: comment.toObject({ getters: true }) });
 };
 
-module.exports = { commentPost, updateComment, deleteComment };
+module.exports = { commentPost, updateComment, deleteComment, getPostComments };

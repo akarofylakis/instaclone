@@ -117,3 +117,18 @@ export const searchUsersAsync = (searchString) => {
       .catch((e) => dispatch(searchUsersFailure(e.message)));
   };
 };
+
+export const fetchUserSuccess = (user) => ({
+  type: UserActionTypes.FETCH_USER,
+  payload: user,
+});
+
+export const fetchUserAsync = (userId) => {
+  return (dispatch) => {
+    return fetch(`${process.env.REACT_APP_API_URL}/users/${userId}`)
+      .then((res) => res.json())
+      .then((json) => {
+        dispatch(fetchUserSuccess(json.data));
+      });
+  };
+};
