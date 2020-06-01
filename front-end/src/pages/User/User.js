@@ -43,6 +43,22 @@ const DEFAULT_USER = {
   token: '',
 };
 
+const DEFAULT_USER_PROFILE = {
+  userId: '',
+  email: '',
+  posts_count: 0,
+  followers_count: 0,
+  following_count: 0,
+  user_info: {
+    avatar_url: '',
+    summary: '',
+    fullname: '',
+  },
+  username: '',
+  id: '',
+  token: '',
+};
+
 const User = ({
   match,
   currentUser,
@@ -58,7 +74,16 @@ const User = ({
   fetchFollows,
   userFollows,
 }) => {
-  console.log(userFollows);
+  if (!currentUser) {
+    currentUser = DEFAULT_USER;
+  }
+  if (!userProfile) {
+    userProfile = DEFAULT_USER_PROFILE;
+  }
+  if (!userLikes) {
+    userLikes = [];
+  }
+
   const followedByUser = userFollows.filter(
     (follow) => follow.user === match.params.userId
   )[0]
@@ -66,12 +91,7 @@ const User = ({
     : false;
   const [followStatus, toggleFollow] = useState(followedByUser);
 
-  if (!currentUser) {
-    currentUser = DEFAULT_USER;
-  }
-  if (!userLikes) {
-    userLikes = [];
-  }
+  
 
   useEffect(() => {
     fetchUserPosts(match.params.userId);

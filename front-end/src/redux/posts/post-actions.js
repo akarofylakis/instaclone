@@ -1,4 +1,4 @@
-import PostActionTypes from './post-types';
+import PostActionTypes from "./post-types";
 
 export const fetchPostsStart = () => ({
   type: PostActionTypes.FETCH_POSTS_START,
@@ -18,7 +18,13 @@ export const fetchPostsAsync = (userId) => {
   return (dispatch) => {
     dispatch(fetchPostsStart());
 
-    return fetch(`${process.env.REACT_APP_API_URL}/posts/feed/${userId}`)
+    return fetch(`${process.env.REACT_APP_API_URL}/posts/feed/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${
+          JSON.parse(localStorage.getItem("user")).token
+        }`,
+      },
+    })
       .then((res) => res.json())
       .then((json) => {
         dispatch(fetchPostsSuccess(json.feed));
@@ -45,7 +51,13 @@ export const fetchPostAsync = (postId) => {
   return (dispatch) => {
     dispatch(fetchPostStart());
 
-    return fetch(`${process.env.REACT_APP_API_URL}/posts/${postId}`)
+    return fetch(`${process.env.REACT_APP_API_URL}/posts/${postId}`, {
+      headers: {
+        Authorization: `Bearer ${
+          JSON.parse(localStorage.getItem("user")).token
+        }`,
+      },
+    })
       .then((res) => res.json())
       .then((json) => {
         dispatch(fetchPostSuccess(json.data));
@@ -72,7 +84,16 @@ export const fetchUserPostsAsync = (userId) => {
   return (dispatch) => {
     dispatch(fetchUserPostsStart());
 
-    return fetch(`${process.env.REACT_APP_API_URL}/posts/user/${userId}/posts`)
+    return fetch(
+      `${process.env.REACT_APP_API_URL}/posts/user/${userId}/posts`,
+      {
+        headers: {
+          Authorization: `Bearer ${
+            JSON.parse(localStorage.getItem("user")).token
+          }`,
+        },
+      }
+    )
       .then((res) => res.json())
       .then((json) => {
         if (json) {
@@ -104,9 +125,12 @@ export const createPostAsync = (post) => {
     dispatch(createPostStart());
 
     return fetch(`${process.env.REACT_APP_API_URL}/posts/create`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${
+          JSON.parse(localStorage.getItem("user")).token
+        }`,
       },
       body: JSON.stringify(post),
     })

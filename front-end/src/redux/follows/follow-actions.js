@@ -1,4 +1,4 @@
-import FollowActionTypes from './follow-types';
+import FollowActionTypes from "./follow-types";
 
 export const followUserSuccess = () => ({
   type: FollowActionTypes.FOLLOW_USER_SUCCESS,
@@ -9,9 +9,12 @@ export const followUserAsync = (userIdToFollow, followerId) => {
     return fetch(
       `${process.env.REACT_APP_API_URL}/users/${userIdToFollow}/follow`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            JSON.parse(localStorage.getItem("user")).token
+          }`,
         },
         body: JSON.stringify({ followerId }),
       }
@@ -32,9 +35,12 @@ export const unfollowUserAsync = (userIdToUnfollow, followerId) => {
     return fetch(
       `${process.env.REACT_APP_API_URL}/users/${userIdToUnfollow}/unfollow`,
       {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            JSON.parse(localStorage.getItem("user")).token
+          }`,
         },
         body: JSON.stringify({ followerId }),
       }
@@ -53,7 +59,13 @@ export const fetchFollowsSuccess = (follows) => ({
 
 export const fetchFollowsAsync = (userId) => {
   return (dispatch) => {
-    return fetch(`${process.env.REACT_APP_API_URL}/follows/${userId}/follows`)
+    return fetch(`${process.env.REACT_APP_API_URL}/follows/${userId}/follows`, {
+      headers: {
+        Authorization: `Bearer ${
+          JSON.parse(localStorage.getItem("user")).token
+        }`,
+      },
+    })
       .then((res) => res.json())
       .then((json) => {
         dispatch(fetchFollowsSuccess(json.data));

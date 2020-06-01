@@ -1,4 +1,4 @@
-import CommentActionTypes from './comment-types';
+import CommentActionTypes from "./comment-types";
 
 export const fetchPostCommentsStart = () => ({
   type: CommentActionTypes.FETCH_POST_COMMENTS_START,
@@ -18,7 +18,13 @@ export const fetchPostCommentsAsync = (postId) => {
   return (dispatch) => {
     dispatch(fetchPostCommentsStart());
 
-    return fetch(`${process.env.REACT_APP_API_URL}/posts/${postId}/comments`)
+    return fetch(`${process.env.REACT_APP_API_URL}/posts/${postId}/comments`, {
+      headers: {
+        Authorization: `Bearer ${
+          JSON.parse(localStorage.getItem("user")).token
+        }`,
+      },
+    })
       .then((res) => res.json())
       .then((json) => {
         dispatch(fetchPostCommentsSuccess(json.data));
@@ -48,9 +54,12 @@ export const createCommentAsync = (postId, userId, body) => {
     console.log(postId, userId, body);
 
     return fetch(`${process.env.REACT_APP_API_URL}/posts/${postId}/comment`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${
+          JSON.parse(localStorage.getItem("user")).token
+        }`,
       },
       body: JSON.stringify({ body, userId }),
     })
@@ -71,9 +80,12 @@ export const deleteCommentAsync = (commentId, postId, userId) => {
     return fetch(
       `${process.env.REACT_APP_API_URL}/posts/comment/${commentId}/delete`,
       {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            JSON.parse(localStorage.getItem("user")).token
+          }`,
         },
         body: JSON.stringify({ postId, userId }),
       }

@@ -1,4 +1,4 @@
-import LikeActionTypes from './like-types';
+import LikeActionTypes from "./like-types";
 
 export const likePostStart = () => ({
   type: LikeActionTypes.LIKE_POST_START,
@@ -19,9 +19,12 @@ export const likePostAsync = (postId, userId) => {
     dispatch(likePostStart);
 
     return fetch(`${process.env.REACT_APP_API_URL}/posts/${postId}/like`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${
+          JSON.parse(localStorage.getItem("user")).token
+        }`,
       },
       body: JSON.stringify({ userId }),
     })
@@ -52,9 +55,12 @@ export const unlikePostAsync = (postId, userId) => {
     dispatch(unlikePostStart);
 
     return fetch(`${process.env.REACT_APP_API_URL}/posts/${postId}/unlike`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${
+          JSON.parse(localStorage.getItem("user")).token
+        }`,
       },
       body: JSON.stringify({ userId }),
     })
@@ -84,7 +90,13 @@ export const fetchUserLikesAsync = (userId) => {
   return (dispatch) => {
     dispatch(fetchUserLikesStart);
 
-    return fetch(`${process.env.REACT_APP_API_URL}/users/${userId}/likes`)
+    return fetch(`${process.env.REACT_APP_API_URL}/users/${userId}/likes`, {
+      headers: {
+        Authorization: `Bearer ${
+          JSON.parse(localStorage.getItem("user")).token
+        }`,
+      },
+    })
       .then((res) => res.json())
       .then((json) => {
         dispatch(fetchUserLikesSuccess(json.data));

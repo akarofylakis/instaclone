@@ -1,0 +1,30 @@
+GET http://localhost:4000/api/v1
+
+###
+
+GET http://localhost:4000/api/v1/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZWQ1NGI3NzQ5YzU4ODJkMzg3YTRkNjkiLCJlbWFpbCI6InNvbWVlbWFpbEBnbWFpbC5jb20iLCJpYXQiOjE1OTEwMzY3OTEsImV4cCI6MTU5MTA0MDM5MX0.sRQU0KacRUQq8gxcn9E3j3ndo-hH3bRObiFmSf7W0mc
+
+###
+
+POST http://localhost:4000/api/v1/users/signup
+Content-Type: application/json
+
+{
+  "username": "someusername",
+  "password": "somepassword",
+  "email": "someemail@gmail.com",
+  "fullname": "Some Name",
+  "summary": "",
+  "avatar_url": "https://images.unsplash.com/photo-1590962441900-43688d9a1de6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80"
+}
+
+###
+
+POST http://localhost:4000/api/v1/users/signin
+Content-Type: application/json
+
+{
+  "password": "somepassword",
+  "email": "someemail@gmail.com"
+}
