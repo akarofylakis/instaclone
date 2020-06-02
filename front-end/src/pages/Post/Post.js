@@ -182,7 +182,7 @@ const Post = ({
         <ul className="post__post-comments-list">
           {postComments[0] ? (
             postComments.map((comment) => (
-              <li>
+              <li key={comment.id}>
                 <Link to={`/user/${comment.user.id}`}>
                   <h6 className="comment-user">{comment.user.username}</h6>
                 </Link>

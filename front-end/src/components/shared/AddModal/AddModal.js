@@ -51,15 +51,18 @@ const AddModal = ({
           >
             {!post.imageUrl && <h6>Image Preview</h6>}
           </div>
-          <Input
-            onChange={changeHandler}
-            type="text"
-            name="imageUrl"
-            value={imageUrl}
-            validators={[VALIDATOR_REQUIRED(), VALIDATOR_URL()]}
-            errorMessage="Please enter a valid image URL"
-            placeholder="Image URL"
-          />
+          <div className="image-upload-field">
+            <Input
+              onChange={changeHandler}
+              type="text"
+              name="imageUrl"
+              value={imageUrl}
+              validators={[VALIDATOR_REQUIRED(), VALIDATOR_URL()]}
+              errorMessage="Please enter a valid image URL"
+              placeholder="Image URL"
+            />
+            <Button secondary text="Generate Random"></Button>
+          </div>
         </div>
         <Input
           onChange={changeHandler}

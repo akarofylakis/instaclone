@@ -1,11 +1,11 @@
-const HttpError = require('../../src/utils/HttpError');
-const { idGetter } = require('./utils/snippets');
-const { getAllByUser } = require('./utils/getters');
+const HttpError = require("../../src/utils/HttpError");
+const { idGetter } = require("./utils/snippets");
+const { getAllByUser } = require("./utils/getters");
 
-const User = require('../models/user');
-const Follower = require('../models/follower');
+const User = require("../models/user");
+const Follower = require("../models/follower");
 
-const getUserFollows = getAllByUser(Follower, null, 'follower');
+const getUserFollows = getAllByUser(Follower, null, "follower");
 
 const followUser = async (req, res, next) => {
   const { userId } = req.params;
@@ -17,11 +17,18 @@ const followUser = async (req, res, next) => {
   const follower = await idGetter(User, followerId, `Fetching user failed.`);
 
   if (!follower || !user) {
-    return next(new HttpError('Following user failed, please try again.', 422));
+    return next(
+      new HttpError("Data associated with this request not found.", 404)
+    );
   }
 
   if (followerId === userId) {
-    return next(new HttpError('Following user failed, please try again.', 422));
+    return next(
+      new HttpError(
+        "Data associated with this request not in valid state.",
+        409
+      )
+    );
   }
 
   let existingFollow;
@@ -31,11 +38,15 @@ const followUser = async (req, res, next) => {
       user,
     });
   } catch (err) {
-    return next(new HttpError('Following user failed, please try again.', 422));
+    return next(
+      new HttpError("Data associated with this request not found.", 404)
+    );
   }
 
   if (existingFollow) {
-    return next(new HttpError('Following user failed, please try again.', 422));
+    return next(
+      new HttpError("Data associated with this request not found.", 404)
+    );
   }
 
   const follow = new Follower({
@@ -47,7 +58,7 @@ const followUser = async (req, res, next) => {
   try {
     await follow.save();
   } catch (err) {
-    return next(new HttpError('Following user failed, please try again.', 500));
+    return next(new HttpError("Bad Gateway.", 502));
   }
 
   const currentFollowing = follower.following_count;
@@ -59,7 +70,7 @@ const followUser = async (req, res, next) => {
     await user.save();
     await follower.save();
   } catch (err) {
-    return next(new HttpError('Creating post failed, please try again.', 422));
+    return next(new HttpError("Bad Gateway.", 502));
   }
 
   return res.status(201).json({ follow: follow.toObject({ getters: true }) });
@@ -83,7 +94,9 @@ const unfollowUser = async (req, res, next) => {
   );
 
   if (!follower || !user) {
-    return next(new HttpError('Following user failed, please try again.', 422));
+    return next(
+      new HttpError("Data associated with this request not found.", 404)
+    );
   }
 
   let follow;
@@ -91,22 +104,20 @@ const unfollowUser = async (req, res, next) => {
     follow = await Follower.findOne({ follower, user });
   } catch (err) {
     return next(
-      new HttpError('UnFollowing user failed, please try again.', 422)
+      new HttpError("Data associated with this request not found.", 404)
     );
   }
 
   if (!follow) {
     return next(
-      new HttpError('UnFollowing user failed, please try again.', 422)
+      new HttpError("Data associated with this request not found.", 404)
     );
   }
 
   try {
     await follow.remove();
   } catch (err) {
-    return next(
-      new HttpError('UnFollowing user failed, please try again.', 500)
-    );
+    return next(new HttpError("Bad Gateway.", 502));
   }
 
   const currentFollowing = follower.following_count;
@@ -118,7 +129,7 @@ const unfollowUser = async (req, res, next) => {
     await user.save();
     await follower.save();
   } catch (err) {
-    return next(new HttpError('Creating post failed, please try again.', 422));
+    return next(new HttpError("Bad Gateway.", 502));
   }
 
   return res.status(200).json({ follow: follow.toObject({ getters: true }) });
@@ -133,14 +144,14 @@ const acceptFollow = async (req, res, next) => {
   try {
     user = await User.findById(userId);
   } catch (err) {
-    return next(new HttpError('Accepting user failed, please try again.', 422));
+    return next(new HttpError("Accepting user failed, please try again.", 422));
   }
 
   let follower;
   try {
     follower = await User.findById(followerId);
   } catch (err) {
-    return next(new HttpError('Accepting user failed, please try again.', 422));
+    return next(new HttpError("Accepting user failed, please try again.", 422));
   }
 
   let existingFollow;
@@ -151,11 +162,11 @@ const acceptFollow = async (req, res, next) => {
       status: false,
     });
   } catch (err) {
-    return next(new HttpError('Accepting user failed, please try again.', 500));
+    return next(new HttpError("Accepting user failed, please try again.", 500));
   }
 
   if (!existingFollow) {
-    return next(new HttpError('Accepting user failed, please try again.', 500));
+    return next(new HttpError("Accepting user failed, please try again.", 500));
   }
 
   existingFollow.status = true;
@@ -163,7 +174,7 @@ const acceptFollow = async (req, res, next) => {
   try {
     await existingFollow.save();
   } catch (err) {
-    return next(new HttpError('Accepting user failed, please try again.', 500));
+    return next(new HttpError("Accepting user failed, please try again.", 500));
   }
 
   return res

@@ -1,9 +1,9 @@
-const HttpError = require('../../../src/utils/HttpError');
-const { idGetter } = require('./snippets');
+const HttpError = require("../../../src/utils/HttpError");
+const { idGetter } = require("./snippets");
 
-const User = require('../../models/user');
-const Post = require('../../models/post');
-const Follow = require('../../models/follower');
+const User = require("../../models/user");
+const Post = require("../../models/post");
+const Follow = require("../../models/follower");
 
 const getAll = (collection, exclude) => {
   return async (req, res, next) => {
@@ -42,7 +42,7 @@ const getAllByUser = (collection, exclude, customUserField) => {
     const user = await idGetter(User, userId, `Fetching user failed.`);
 
     if (!user) {
-      return next(new HttpError(`Fetching data failed.`, 422));
+      return next(new HttpError(`Fetching data failed.`, 500));
     }
 
     let data;
@@ -79,7 +79,7 @@ const getAllByPost = (collection) => {
     const post = await idGetter(Post, postId, `Fetching user failed.`);
 
     if (!post) {
-      return next(new HttpError(`Fetching data failed.`, 422));
+      return next(new HttpError(`Fetching data failed.`, 500));
     }
 
     let data;
@@ -113,7 +113,7 @@ const getOne = (collection, param) => {
     const data = await idGetter(collection, id, `Fetching data failed.`);
 
     if (!data) {
-      return next(new HttpError(`Fetching data failed.`, 422));
+      return next(new HttpError(`Fetching data failed.`, 500));
     }
 
     data.user = await User.findById(data.user);
@@ -154,7 +154,7 @@ const getFeed = (collection) => {
           user: userFollowing.user,
         });
       } catch (err) {
-        return next(new HttpError(`Fetching data failed.`, 502));
+        return next(new HttpError(`Fetching data failed.`, 500));
       }
 
       if (userData) {
@@ -180,7 +180,7 @@ const getFeed = (collection) => {
         ),
       });
     } catch (e) {
-      return next(new HttpError(`Fetching data failed.`, 503));
+      return next(new HttpError(`Fetching data failed.`, 500));
     }
   };
 };

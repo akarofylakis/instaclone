@@ -64,12 +64,16 @@ export const signInAsync = (userCredentials) => {
       },
       body: JSON.stringify(userCredentials),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        return res.json();
+      })
       .then((json) => {
         if (json.token) {
+          console.log(json);
           dispatch(signInSuccess(json));
           localStorage.setItem("user", JSON.stringify(json));
         } else {
+          console.log(json);
           dispatch(signInFailure(json.message));
         }
       });

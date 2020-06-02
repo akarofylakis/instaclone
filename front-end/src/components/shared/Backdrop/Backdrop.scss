@@ -1,8 +1,9 @@
 .backdrop {
   background-color: rgba(0, 0, 0, 0.4);
   z-index: 40;
-  width: 100%;
+  width: 120%;
   height: 100%;
+  margin-left: -18px;
   position: fixed;
   display: flex;
   align-items: center;

@@ -1,10 +1,10 @@
-const HttpError = require('../../src/utils/HttpError');
-const { idGetter } = require('./utils/snippets');
-const { getAllByPost } = require('./utils/getters');
+const HttpError = require("../../src/utils/HttpError");
+const { idGetter } = require("./utils/snippets");
+const { getAllByPost } = require("./utils/getters");
 
-const Post = require('../models/post');
-const User = require('../models/user');
-const Comment = require('../models/comment');
+const Post = require("../models/post");
+const User = require("../models/user");
+const Comment = require("../models/comment");
 
 const getPostComments = getAllByPost(Comment);
 
@@ -30,9 +30,7 @@ const commentPost = async (req, res, next) => {
   try {
     await comment.save();
   } catch (err) {
-    return next(
-      new HttpError('Commenting post failed, please try again.', 422)
-    );
+    return next(new HttpError("Bad Gateway.", 502));
   }
 
   const postComments = post.comments_count;
@@ -40,7 +38,7 @@ const commentPost = async (req, res, next) => {
   try {
     await post.save();
   } catch (err) {
-    return next(new HttpError('Liking post failed, please try again.', 500));
+    return next(new HttpError("Bad Gateway.", 502));
   }
 
   return res.status(201).json({ comment: comment.toObject({ getters: true }) });
@@ -54,12 +52,12 @@ const updateComment = async (req, res, next) => {
   const comment = await idGetter(
     Comment,
     commentId,
-    `Updating comment failed, please try again.`
+    `Data associated with this request not found.`
   );
 
   if (!comment) {
     return next(
-      new HttpError('Updating comment failed, please try again.', 422)
+      new HttpError("Data associated with this request not found.", 422)
     );
   }
 
@@ -68,9 +66,7 @@ const updateComment = async (req, res, next) => {
   try {
     await comment.save();
   } catch (err) {
-    return next(
-      new HttpError('Updating comment failed, please try again.', 500)
-    );
+    return next(new HttpError("Bad Gateway.", 502));
   }
 
   return res.status(200).json({ comment: comment.toObject({ getters: true }) });
@@ -83,33 +79,29 @@ const deleteComment = async (req, res, next) => {
   const comment = await idGetter(
     Comment,
     commentId,
-    `Deleting comment failed, please try again.`
+    `Data associated with this request not found.`
   );
 
   const post = await idGetter(
     Post,
     postId,
-    `Commenting post failed, please try again.`
+    `Data associated with this request not found.`
   );
 
   if (!comment) {
     return next(
-      new HttpError('Deleting comment failed, please try again.', 422)
+      new HttpError("Data associated with this request not found.", 404)
     );
   }
 
   if (new String(userId).valueOf() !== new String(comment.user).valueOf()) {
-    return next(
-      new HttpError('Deleting comment failed, please try again.', 423)
-    );
+    return next(new HttpError("Unathorized to remove comment", 401));
   }
 
   try {
     await comment.remove();
   } catch (err) {
-    return next(
-      new HttpError('Deleting comment failed, please try again.', 500)
-    );
+    return next(new HttpError("Bad Gateway.", 502));
   }
 
   const postComments = post.comments_count;
@@ -117,7 +109,7 @@ const deleteComment = async (req, res, next) => {
   try {
     await post.save();
   } catch (err) {
-    return next(new HttpError('Liking post failed, please try again.', 500));
+    return next(new HttpError("Bad Gateway.", 502));
   }
 
   return res.status(200).json({ comment: comment.toObject({ getters: true }) });

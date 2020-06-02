@@ -1,14 +1,14 @@
-const HttpError = require('../../src/utils/HttpError');
-const { idGetter } = require('./utils/snippets');
+const HttpError = require("../../src/utils/HttpError");
+const { idGetter } = require("./utils/snippets");
 
-const Post = require('../models/post');
-const User = require('../models/user');
-const { getAll, getOne, getAllByUser, getFeed } = require('./utils/getters');
+const Post = require("../models/post");
+const User = require("../models/user");
+const { getAll, getOne, getAllByUser, getFeed } = require("./utils/getters");
 
 const getPosts = getAll(Post);
 const getUserPosts = getAllByUser(Post);
 const getPostsFeed = getFeed(Post);
-const getPost = getOne(Post, 'postId');
+const getPost = getOne(Post, "postId");
 
 const createPost = async (req, res, next) => {
   const { imageUrl, caption, userId } = req.body;
@@ -24,7 +24,7 @@ const createPost = async (req, res, next) => {
   try {
     await createdPost.save();
   } catch (err) {
-    return next(new HttpError('Creating post failed, please try again.', 422));
+    return next(new HttpError("Bad Gateway", 502));
   }
 
   const currentPosts = user.posts_count;
@@ -33,7 +33,7 @@ const createPost = async (req, res, next) => {
   try {
     await user.save();
   } catch (err) {
-    return next(new HttpError('Creating post failed, please try again.', 422));
+    return next(new HttpError("Bad Gateway", 502));
   }
 
   return res
@@ -45,10 +45,6 @@ const updatePost = async (req, res, next) => {
   const { caption } = req.body;
   const { postId } = req.params;
 
-  if (!caption) {
-    return next(new HttpError('Updating post failed, please try again.', 422));
-  }
-
   const post = await idGetter(
     Post,
     postId,
@@ -58,13 +54,13 @@ const updatePost = async (req, res, next) => {
   if (post) {
     post.caption = caption;
   } else {
-    return next(new HttpError('Updating post failed, please try again.', 422));
+    return next(new HttpError("Post associated with this ID not found.", 404));
   }
 
   try {
     await post.save();
   } catch (err) {
-    return next(new HttpError('Updating post failed, please try again.', 500));
+    return next(new HttpError("Bad Gateway.", 502));
   }
 
   return res.status(200).json({ post: post.toObject({ getters: true }) });
@@ -80,13 +76,13 @@ const deletePost = async (req, res, next) => {
   );
 
   if (!post) {
-    return next(new HttpError('Deleting post failed, please try again.', 422));
+    return next(new HttpError("Post associated with this ID not found.", 404));
   }
 
   try {
     await post.remove();
   } catch (err) {
-    return next(new HttpError('Deleting post failed, please try again.', 500));
+    return next(new HttpError("Bad Gateway.", 502));
   }
 
   return res.status(200).json({ post: post.toObject({ getters: true }) });

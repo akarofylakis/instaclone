@@ -1,10 +1,10 @@
-const HttpError = require('../../src/utils/HttpError');
-const { idGetter } = require('./utils/snippets');
-const { getAllByUser } = require('./utils/getters');
+const HttpError = require("../../src/utils/HttpError");
+const { idGetter } = require("./utils/snippets");
+const { getAllByUser } = require("./utils/getters");
 
-const Post = require('../models/post');
-const User = require('../models/user');
-const Like = require('../models/like');
+const Post = require("../models/post");
+const User = require("../models/user");
+const Like = require("../models/like");
 
 const getUserLikes = getAllByUser(Like);
 
@@ -25,11 +25,15 @@ const likePost = async (req, res, next) => {
   try {
     existinglike = await Like.findOne({ post, user });
   } catch (err) {
-    return next(new HttpError('Liking post failed, please try again.', 500));
+    return next(
+      new HttpError("Data associated with this ID are in invalid state.", 409)
+    );
   }
 
   if (existinglike) {
-    return next(new HttpError('Liking post failed, please try again.', 500));
+    return next(
+      new HttpError("Data associated with this ID are in invalid state.", 409)
+    );
   }
 
   const like = new Like({
@@ -40,7 +44,7 @@ const likePost = async (req, res, next) => {
   try {
     await like.save();
   } catch (err) {
-    return next(new HttpError('Liking post failed, please try again.', 422));
+    return next(new HttpError("Bad Gateway.", 502));
   }
 
   const postLikes = post.likes_count;
@@ -48,7 +52,7 @@ const likePost = async (req, res, next) => {
   try {
     await post.save();
   } catch (err) {
-    return next(new HttpError('Liking post failed, please try again.', 500));
+    return next(new HttpError("Bad Gateway.", 502));
   }
 
   return res.status(201).json({ like: like.toObject({ getters: true }) });
@@ -71,17 +75,21 @@ const unlikePost = async (req, res, next) => {
   try {
     like = await Like.findOne({ post, user });
   } catch (err) {
-    return next(new HttpError('Unliking post failed, please try again.', 422));
+    return next(
+      new HttpError("Data associated with this request not found.", 404)
+    );
   }
 
   if (!like) {
-    return next(new HttpError('Unliking post failed, please try again.', 422));
+    return next(
+      new HttpError("Data associated with this request not found.", 404)
+    );
   }
 
   try {
     await like.remove();
   } catch (err) {
-    return next(new HttpError('Unliking post failed, please try again.', 500));
+    return next(new HttpError("Bad Gateway.", 502));
   }
 
   const postLikes = post.likes_count;
@@ -89,7 +97,7 @@ const unlikePost = async (req, res, next) => {
   try {
     await post.save();
   } catch (err) {
-    return next(new HttpError('Unliking post failed, please try again.', 500));
+    return next(new HttpError("Bad Gateway.", 502));
   }
 
   return res.status(200).json({ like: like.toObject({ getters: true }) });

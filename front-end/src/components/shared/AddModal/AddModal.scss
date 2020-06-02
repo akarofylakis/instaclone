@@ -1,8 +1,8 @@
 .add-modal {
   position: fixed;
-  left: 60%;
+  left: 65%;
   top: 50%;
-  transform: translateX(-50%) translateY(-50%);
+  transform: translate(-50%, -50%);
   border-radius: 6px;
   background-color: #fff;
   width: 40%;
@@ -35,6 +35,26 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      .image-upload-field {
+        display: flex;
+        flex-direction: row;
+
+        justify-content: center;
+        button {
+          width: 30%;
+          padding: 5px 0;
+          font-size: 12px;
+          border-radius: 0 7px 7px 0;
+          max-height: 38px;
+        }
+        .input-container {
+          width: 40%;
+          margin-right: 30px;
+          input {
+            border-radius: 7px 0 0 7px;
+          }
+        }
+      }
       .image-preview {
         width: 100px;
         height: 100px;
@@ -59,6 +79,22 @@
       input {
         width: 100%;
       }
+    }
+  }
+}
+@media only screen and (max-width: 800px) {
+  header {
+    .add-modal {
+      width: 80%;
+      left: 50%;
+    }
+  }
+}
+
+@media only screen and (max-width: 1030px) {
+  header {
+    .add-modal {
+      width: 60%;
     }
   }
 }

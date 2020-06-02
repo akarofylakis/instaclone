@@ -1,9 +1,10 @@
 li.item {
-  flex: 33.3333%;
+  flex-basis: 33.3333%;
   height: 340px;
   padding-right: 20px;
   margin-bottom: 60px;
   box-sizing: border-box;
+  align-self: flex-start;
 
   &:nth-child(3n) {
     padding-right: 0;
@@ -34,9 +35,9 @@ li.item {
     .like-container {
       width: 48px;
       position: absolute;
-      top: 37%;
-      left: 37%;
-      transform: translateX(-50%), translateY(-50%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       z-index: 3;
       padding: 15px;
       border-radius: 10px;
@@ -149,8 +150,6 @@ li.item {
   }
 }
 
-/* Wobble Horizontal */
-
 @keyframes hvr-wobble-horizontal {
   16.65% {
     -webkit-transform: translateX(5px);
@@ -230,4 +229,47 @@ li.item {
   animation-timing-function: linear;
   -webkit-animation-iteration-count: 1;
   animation-iteration-count: 1;
+}
+
+@media only screen and (max-width: 1030px) {
+  li.item {
+    flex: 100%;
+    padding-right: 0px;
+    background-color: #eee;
+    &:nth-child(3n) {
+      padding-right: 0;
+    }
+    .item__image {
+      width: 90%;
+      margin: 0 auto;
+    }
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  li.item {
+    height: 240px;
+    background-color: #eee;
+    .item__image {
+      width: 60%;
+      margin: 0 auto;
+    }
+  }
+}
+
+@media only screen and (min-width: 1030px) {
+  li.item {
+    &:nth-child(3n) {
+      padding-right: 20px;
+    }
+  }
+}
+
+@media only screen and (min-width: 1900px) {
+  li.item {
+    flex: 25%;
+    &:nth-child(3n) {
+      padding-right: 20px;
+    }
+  }
 }

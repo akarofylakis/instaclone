@@ -1,4 +1,3 @@
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 const User = require("../models/user");
@@ -18,13 +17,18 @@ const createUser = async (req, res, next) => {
   try {
     existingUser = await User.findOne({ email });
   } catch (err) {
-    return next(new HttpError("Creating user failed, please try again.", 501));
+    return next(
+      new HttpError(
+        "Signing up failed: Account associated with this email already exists.",
+        409
+      )
+    );
   }
   if (existingUser) {
     return next(
       new HttpError(
         "Signing up failed: Account associated with this email already exists.",
-        422
+        409
       )
     );
   }
@@ -33,7 +37,7 @@ const createUser = async (req, res, next) => {
   try {
     hashedPassword = await bcrypt.hash(password, 12);
   } catch (err) {
-    return next(new HttpError("Creating user failed, please try again.", 502));
+    return next(new HttpError("Internal Server Error", 500));
   }
 
   const createdUser = new User({
@@ -49,14 +53,14 @@ const createUser = async (req, res, next) => {
   try {
     await createdUser.save();
   } catch (err) {
-    return next(err);
+    return next(new HttpError("Bad Gateway", 502));
   }
 
   let token;
   try {
     token = generateToken(createdUser);
   } catch (err) {
-    return next(new HttpError("Creating user failed, please try again.", 504));
+    return next(new HttpError("Internal Server Error", 500));
   }
 
   return res.status(201).json({
@@ -80,22 +84,40 @@ const signInUser = async (req, res, next) => {
   try {
     existingUser = await User.findOne({ email });
   } catch (err) {
-    return next(new HttpError("Signing in failed, please try again.", 422));
+    return next(
+      new HttpError(
+        "Account associated with these credentials not found. Please try again.",
+        404
+      )
+    );
   }
   if (!existingUser) {
-    return next(new HttpError("Signing in failed, please try again.", 422));
+    return next(
+      new HttpError(
+        "Account associated with these credentials not found. Please try again.",
+        404
+      )
+    );
   }
 
   let isValidPassword = false;
   try {
     isValidPassword = await bcrypt.compare(password, existingUser.password);
   } catch (err) {
-    return next(new HttpError("Signing in failed, please try again.", 422));
+    return next(
+      new HttpError(
+        "Account associated with these credentials not found. Please try again.",
+        422
+      )
+    );
   }
 
   if (!isValidPassword) {
     return next(
-      new HttpError("Invalid credentials, could not log you in.", 422)
+      new HttpError(
+        "Account associated with these credentials not found. Please try again.",
+        422
+      )
     );
   }
 
@@ -103,7 +125,7 @@ const signInUser = async (req, res, next) => {
   try {
     token = generateToken(existingUser);
   } catch (err) {
-    return next(new HttpError("Signing in failed, please try again.", 500));
+    return next(new HttpError("Internal Server Error", 500));
   }
 
   return res.status(200).json({

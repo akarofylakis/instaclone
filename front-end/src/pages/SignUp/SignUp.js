@@ -107,7 +107,7 @@ const SignUp = ({ signUp }) => {
           ]}
           errorMessage="Invalid Password: (Min Characters: 6)"
         />
-        <hr />
+
         <Input
           value={fullname}
           onChange={changeHandler}
@@ -130,6 +130,7 @@ const SignUp = ({ signUp }) => {
             name="avatar_url"
             placeholder="Avatar URL"
           />
+          <Button secondary text="Generate Random"></Button>
         </div>
         <Button primary type="submit" text="Create Account">
           <AddIcon />

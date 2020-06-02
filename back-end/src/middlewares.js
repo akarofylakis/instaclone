@@ -1,10 +1,8 @@
-const errorHandler = (error, req, res) => {
-  const statusCode = error.code || 404;
-  const message = error.message || `Not found - ${req.originalUrl}`;
-  res.status(statusCode);
+const errorHandler = (err, req, res, next) => {
+  res.status(err.code || 404);
   res.json({
-    status: statusCode,
-    message,
+    status: err.code || 404,
+    message: err.message || `Not found - ${req.originalUrl}`,
   });
 };
 

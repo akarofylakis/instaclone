@@ -2,7 +2,7 @@
   width: 85%;
   min-height: 90vh;
   margin: 0;
-  margin-left: 296px;
+  margin-left: 314px;
   background-color: #fff;
   border-radius: 25px;
   z-index: 3;
@@ -18,4 +18,17 @@
   border-right: 0;
   border-top: 0;
   box-sizing: border-box;
+}
+
+@media only screen and (max-width: 1030px) {
+  .content {
+    margin-left: 264px;
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  .content {
+    width: 100%;
+    margin: 0 auto;
+  }
 }
