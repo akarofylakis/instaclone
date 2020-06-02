@@ -66,3 +66,41 @@
     }
   }
 }
+
+@media only screen and (max-width: 1150px) {
+  .search {
+    ul li {
+      > * {
+        margin-right: 30px;
+        &:first-child,
+        &:last-child {
+          margin-right: 20px;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 990px) {
+  .search {
+    ul li {
+      .search-item__user-follows {
+        display: none;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 580px) {
+  .search {
+    ul li {
+      > * {
+        margin-right: 10px;
+        &:first-child,
+        &:last-child {
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+}

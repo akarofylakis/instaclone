@@ -2,7 +2,7 @@
   width: 85%;
   min-height: 90vh;
   margin: 0;
-  margin-left: 314px;
+  margin-left: 297px;
   background-color: #fff;
   border-radius: 25px;
   z-index: 3;
@@ -22,7 +22,7 @@
 
 @media only screen and (max-width: 1030px) {
   .content {
-    margin-left: 264px;
+    margin-left: 246px;
   }
 }
 
@@ -30,5 +30,15 @@
   .content {
     width: 100%;
     margin: 0 auto;
+  }
+
+  .signed-out-container .content {
+    width: 70%;
+    min-height: 70vh;
+    border-right: 6px solid #25bf6b;
+    border-top: 6px solid #25bf6b;
+    border-radius: 25px;
+    margin-top: 40px;
+    margin-bottom: 40px;
   }
 }

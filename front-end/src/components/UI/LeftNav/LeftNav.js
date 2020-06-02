@@ -30,7 +30,7 @@ const LeftNav = ({ currentUser, signOut }) => {
 
   return (
     <React.Fragment>
-      <nav className="leftNav">
+      <nav className={`leftNav`}>
         <div className="leftNav__logo-container">
           <Link to="/">
             <div className="leftNav__logo-image"></div>
@@ -61,12 +61,12 @@ const LeftNav = ({ currentUser, signOut }) => {
             <li className="leftNav__navigation-link">
               <img
                 alt="feed"
-                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAAoUlEQVQ4jcXPMQ4BURSF4c+EWiKiVKgUKo3SDmYDOq1OYwsapRXYjEavUUhEtKopn+ZJJjIYROYkt7j3nP+9e/mzxrG+UopLrPRTeBLBEYY4Y1oWnuGEQW7WxxHzd/ACB/QKvC72WBaBNaywQ+fFBy1ssUZyHzawQUDz3YoxEyLTqKONLJrXXDAUbJnPZJF9CoQyXuJHVf9A/aF/vLWsV6FuoTcdF5pGxpQAAAAASUVORK5CYII="
+                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABmJLR0QA/wD/AP+gvaeTAAACiUlEQVR4nO3Zv29NYRzH8VdVGklTSYVEE4ZKWEgwYGBiEKZubDYxYdJ/obWx6mRkYWPRCQkWBgYSBpJKSCWIVmkN50rr3ufc3h/nnOdqn3fyLPc+5/v9fL/nnOc8n3NIJBKJRDRO1sa6ZAw/MI8zkbVUzjksYKk2fuF8VEUVMo5Fy8WvHBMRdZVOHyaFC185rtXmrin6MaWx2G+1Uf/7VO2YNcEAbmkschZHcQifAv/fwaYIegtlEPc0FjeDAyvm7cX7wLwHGKpQb6EM46HGot5id2D+KF4H5j/B1gr0Fsp2PNdYzEvsKOG4niLvTD7V2pls98rpKfLu5Wnt3cuDuB+IU7929BSHhVfzuzpbzQdwOxBvFscK0Fsox/FVo9ib2NhF3H7cCMT9jlNdxC2UMcxpFHkdGwqI34ergfg9YaIu4Ldq9vTjgTyLuFRCrpYF1ZuaRVwuMWeVDc8l75JckNncsjmLn4H8Rd1yTclblOZka0FVnJYthEUvuk3JMzVfxHksHcHngJ5OH7tNyduYfMTBopO1wT58COiaxuaikgzjUSDJO+wpKkkX7MIbnW+9mzIibE5eYWe3wQtkBC8UbKJGhTv7DNu601sKW/BYQVfqfpnxqA+2pLdfUAwJa56R1dQSeabm7+h18nS3ZKJOCJuatdCAVU3UqMxgNAvQSQNWi1d1vnlZrUEu1k2eqEBQ2Q2oN1FXVgsw6V9T8783gGUT1ZJp6pNtM5sF7EZQjAaQ1dTwxamVT1D1Itr9bNXu8ZXmK90+9jqpAbEFxCY1ILaA2KQGxBYQm9SA2AJikxoQW0BsUgNiC4hNakBsAbHp5ENi1S9GS8237q+A1IDYAhKJRCKRSCRi8QcgUJzUsjTKhgAAAABJRU5ErkJggg=="
               />
               <h5>Feed</h5>
             </li>
           </NavLink>
-          <NavLink to="/messages" activeClassName="active">
+          {/* <NavLink to="/messages" activeClassName="active">
             <li className="leftNav__navigation-link">
               <img
                 alt="messages"
@@ -75,7 +75,7 @@ const LeftNav = ({ currentUser, signOut }) => {
               <h5>Messages</h5>
               <h6>1</h6>
             </li>
-          </NavLink>
+          </NavLink> */}
           <NavLink to={`/user/${currentUser.userId}`} activeClassName="active">
             <li className="leftNav__navigation-link">
               <img

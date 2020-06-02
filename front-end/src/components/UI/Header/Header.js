@@ -52,12 +52,6 @@ const Header = ({ searchUsers }) => {
       </Backdrop>
 
       <div className="inner-container">
-        <div className="menu-logo">
-          <img
-            alt="menu"
-            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QA/wD/AP+gvaeTAAAAP0lEQVRoge3WIQ4AIBADsIP//xk0CYaEMEErpza3KgAgp22y8bzFmaVzT7W4xQAASPKF0gwAgCRfKM0AAOBnEzhSAxbF826PAAAAAElFTkSuQmCC"
-          />
-        </div>
         <div className="input-container">
           <Input
             name="search"

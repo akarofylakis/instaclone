@@ -29,3 +29,9 @@
     z-index: 10;
   }
 }
+
+@media only screen and (max-width: 800px) {
+  .left-container .left-container__logo-image {
+    display: none;
+  }
+}

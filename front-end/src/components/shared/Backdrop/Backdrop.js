@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 
-import './Backdrop.scss';
+import "./Backdrop.scss";
 
-const Backdrop = ({ show, onClick, ...otherProps }) => {
+const Backdrop = ({ className, show, onClick, ...otherProps }) => {
   return (
-    <div onClick={onClick} className={`backdrop ${show && 'backdrop-on'}`}>
+    <div onClick={onClick} className={`backdrop ${show && "backdrop-on"}`}>
       {otherProps.children}
     </div>
   );

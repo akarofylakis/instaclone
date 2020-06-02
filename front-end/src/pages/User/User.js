@@ -183,7 +183,7 @@ const User = ({
                 />
               ))
           ) : (
-            <h5>No posts</h5>
+            <h5 className="no-data">No posts</h5>
           )}
         </ul>
       </div>

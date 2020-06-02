@@ -14,6 +14,7 @@ import User from "../../../pages/User/User";
 import Post from "../../../pages/Post/Post";
 import Search from "../../../pages/Search/Search";
 import Content from "../Content/Content";
+import MobileNav from "../MobileNav/MobileNav";
 
 const SignedIn = () => {
   return (
@@ -21,6 +22,7 @@ const SignedIn = () => {
       <div className="page-container signed-in-container">
         <LeftNav />
         <Content>
+          <MobileNav />
           <Header />
           <Switch>
             <Route path={`/`} exact>

@@ -19,7 +19,7 @@ const generateToken = (user) => {
   return jwt.sign(
     { userId: user.id, email: user.email },
     process.env.ACCESS_TOKEN,
-    { expiresIn: "1h" }
+    { expiresIn: "5h" }
   );
 };
 
