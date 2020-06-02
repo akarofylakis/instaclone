@@ -1,13 +1,13 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
 const storySchema = new Schema(
   {
     source_url: { type: String, required: true, maxlength: 500 },
-    user: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
+    user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Story', storySchema);
+module.exports = mongoose.model("Story", storySchema);

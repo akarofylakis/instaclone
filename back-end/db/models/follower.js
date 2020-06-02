@@ -1,13 +1,13 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
 const followerSchema = new Schema(
   {
-    user: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
+    user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
     follower: {
       type: mongoose.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     status: { type: Boolean, required: true },
@@ -15,4 +15,4 @@ const followerSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Follower', followerSchema);
+module.exports = mongoose.model("Follower", followerSchema);

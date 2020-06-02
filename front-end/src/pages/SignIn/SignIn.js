@@ -53,7 +53,7 @@ const SignIn = ({ signIn }) => {
             VALIDATOR_MINLENGTH(6),
             VALIDATOR_MAXLENGTH(500),
           ]}
-          errorMessage="Please enter a valid password"
+          errorMessage="Invalid Password. (Min Characters: 6)"
         />
         <Button primary type="submit" text="Sign In">
           <img

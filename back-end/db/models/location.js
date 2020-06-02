@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
 const locationSchema = new Schema(
   {
@@ -8,9 +8,9 @@ const locationSchema = new Schema(
     latitude: { type: Number },
     city: { type: String, maxlength: 255 },
     country: { type: String, maxlength: 255 },
-    user_id: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
+    user_id: { type: mongoose.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Location', locationSchema);
+module.exports = mongoose.model("Location", locationSchema);

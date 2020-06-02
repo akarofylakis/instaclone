@@ -1,4 +1,5 @@
 const express = require("express");
+const { check } = require("express-validator");
 
 const { authenticateToken } = require("../utils/auth");
 
@@ -26,8 +27,26 @@ router.get("/:userId/likes", authenticateToken, getUserLikes);
 router.put("/:userId/accept", authenticateToken, acceptFollow);
 
 router.post("/:userId/follow", authenticateToken, followUser);
-router.post("/signup", createUser);
-router.post("/signin", signInUser);
+router.post(
+  "/signup",
+  [
+    check("email").isEmail().normalizeEmail(),
+    check("username").isLength({ min: 4, max: 55 }),
+    check("password").isLength({ min: 6, max: 500 }),
+    check("fullname").isLength({ max: 55 }),
+    check("summary").isLength({ max: 500 }),
+    check("avatar").isLength({ max: 500 }),
+  ],
+  createUser
+);
+router.post(
+  "/signin",
+  [
+    check("email").isEmail().normalizeEmail(),
+    check("password").isLength({ min: 6, max: 500 }),
+  ],
+  signInUser
+);
 
 router.delete("/:userId/unfollow", authenticateToken, unfollowUser);
 

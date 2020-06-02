@@ -1,4 +1,5 @@
 const express = require("express");
+const { check } = require("express-validator");
 
 const {
   getPosts,
@@ -38,7 +39,15 @@ router.delete("/comment/:commentId/delete", deleteComment);
 router.delete("/:postId/unlike", unlikePost);
 
 router.post("/:postId/like", likePost);
-router.post("/create", createPost);
+router.post(
+  "/create",
+  [
+    check("userId").not().isEmpty(),
+    check("imageUrl").not().isEmpty(),
+    check("caption").isLength({ max: 500 }),
+  ],
+  createPost
+);
 router.post("/:postId/comment", commentPost);
 
 module.exports = router;

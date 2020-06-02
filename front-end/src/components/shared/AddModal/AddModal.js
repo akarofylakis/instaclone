@@ -3,6 +3,8 @@ import { connect } from "react-redux";
 
 import { useForm } from "../../../utils/hooks/useForm";
 
+import { VALIDATOR_REQUIRED, VALIDATOR_URL } from "../../../utils/validators";
+
 import { createPostAsync } from "../../../redux/posts/post-actions";
 import { selectCurrentUser } from "../../../redux/users/user-selectors";
 
@@ -54,6 +56,8 @@ const AddModal = ({
             type="text"
             name="imageUrl"
             value={imageUrl}
+            validators={[VALIDATOR_REQUIRED(), VALIDATOR_URL()]}
+            errorMessage="Please enter a valid image URL"
             placeholder="Image URL"
           />
         </div>

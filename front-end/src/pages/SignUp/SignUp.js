@@ -76,10 +76,10 @@ const SignUp = ({ signUp }) => {
           placeholder="Username"
           validators={[
             VALIDATOR_REQUIRED(),
-            VALIDATOR_MINLENGTH(6),
+            VALIDATOR_MINLENGTH(4),
             VALIDATOR_MAXLENGTH(100),
           ]}
-          errorMessage="Invalid Username: (Min Characters: 6)"
+          errorMessage="Invalid Username: (Min Characters: 4)"
         />
         <Input
           value={password}
@@ -102,7 +102,7 @@ const SignUp = ({ signUp }) => {
           placeholder="Repeat Password"
           validators={[
             VALIDATOR_REQUIRED(),
-            VALIDATOR_MINLENGTH(5),
+            VALIDATOR_MINLENGTH(6),
             VALIDATOR_MAXLENGTH(100),
           ]}
           errorMessage="Invalid Password: (Min Characters: 6)"

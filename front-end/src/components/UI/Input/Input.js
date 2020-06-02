@@ -30,11 +30,13 @@ const Input = ({ onChange, validators, errorMessage, ...otherProps }) => {
   });
 
   const changeHandler = (e) => {
-    dispatch({
-      type: "CHANGE",
-      val: e.target.value,
-      validators,
-    });
+    if (validators) {
+      dispatch({
+        type: "CHANGE",
+        val: e.target.value,
+        validators,
+      });
+    }
   };
 
   const touchHandler = (event) => {
