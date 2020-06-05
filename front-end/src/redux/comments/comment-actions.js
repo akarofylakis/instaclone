@@ -1,4 +1,5 @@
 import CommentActionTypes from "./comment-types";
+import useFetch from "../../utils/hooks/useFetch";
 
 export const fetchPostCommentsStart = () => ({
   type: CommentActionTypes.FETCH_POST_COMMENTS_START,
@@ -18,14 +19,16 @@ export const fetchPostCommentsAsync = (postId) => {
   return (dispatch) => {
     dispatch(fetchPostCommentsStart());
 
-    return fetch(`${process.env.REACT_APP_API_URL}/posts/${postId}/comments`, {
-      headers: {
-        Authorization: `Bearer ${
-          JSON.parse(localStorage.getItem("user")).token
-        }`,
-      },
-    })
-      .then((res) => res.json())
+    return useFetch(
+      `${process.env.REACT_APP_API_URL}/posts/${postId}/comments`,
+      {
+        headers: {
+          Authorization: `Bearer ${
+            JSON.parse(localStorage.getItem("user")).token
+          }`,
+        },
+      }
+    )
       .then((json) => {
         dispatch(fetchPostCommentsSuccess(json.data));
       })
@@ -51,19 +54,19 @@ export const createCommentAsync = (postId, userId, body) => {
   return (dispatch) => {
     dispatch(createCommentStart());
 
-    console.log(postId, userId, body);
-
-    return fetch(`${process.env.REACT_APP_API_URL}/posts/${postId}/comment`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${
-          JSON.parse(localStorage.getItem("user")).token
-        }`,
-      },
-      body: JSON.stringify({ body, userId }),
-    })
-      .then((res) => res.json())
+    return useFetch(
+      `${process.env.REACT_APP_API_URL}/posts/${postId}/comment`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            JSON.parse(localStorage.getItem("user")).token
+          }`,
+        },
+        body: JSON.stringify({ body, userId }),
+      }
+    )
       .then((json) => {
         dispatch(createCommentSuccess(json.comment));
       })
@@ -77,7 +80,7 @@ export const deleteCommentSuccess = () => ({
 
 export const deleteCommentAsync = (commentId, postId, userId) => {
   return (dispatch) => {
-    return fetch(
+    return useFetch(
       `${process.env.REACT_APP_API_URL}/posts/comment/${commentId}/delete`,
       {
         method: "DELETE",
@@ -89,10 +92,8 @@ export const deleteCommentAsync = (commentId, postId, userId) => {
         },
         body: JSON.stringify({ postId, userId }),
       }
-    )
-      .then((res) => res.json())
-      .then((json) => {
-        dispatch(deleteCommentSuccess(json.data));
-      });
+    ).then((json) => {
+      dispatch(deleteCommentSuccess(json.data));
+    });
   };
 };

@@ -190,7 +190,7 @@ const Post = ({
               </li>
             ))
           ) : (
-            <h5>No comments</h5>
+            <h5 className="no-data">No comments</h5>
           )}
         </ul>
 

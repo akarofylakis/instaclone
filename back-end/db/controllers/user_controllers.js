@@ -142,4 +142,64 @@ const signInUser = async (req, res, next) => {
   });
 };
 
-module.exports = { getUsers, getUser, createUser, signInUser };
+const signInGoogle = async (req, res) => {
+  const { email, username, password, fullname, summary, avatar_url } = req.body;
+
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email });
+  } catch (err) {
+    return res.send(err);
+  }
+
+  let user;
+  if (!existingUser) {
+    let hashedPassword;
+    try {
+      hashedPassword = await bcrypt.hash(password, 12);
+    } catch (err) {
+      return res.send(err);
+    }
+
+    user = new User({
+      email,
+      username,
+      password: hashedPassword,
+      user_info: {
+        fullname,
+        summary,
+        avatar_url,
+      },
+    });
+
+    try {
+      await user.save();
+    } catch (err) {
+      return res.send(err);
+    }
+  } else {
+    user = existingUser;
+  }
+
+  let token;
+  try {
+    token = generateToken(user);
+  } catch (err) {
+    return res.send(err);
+  }
+
+  return res.status(200).json({
+    userId: user.id,
+    email: user.email,
+    username: user.username,
+    fullname: user.user_info.fullname,
+    summary: user.user_info.summary,
+    avatar_url: user.user_info.avatar_url,
+    posts_count: user.posts_count,
+    followers_count: user.followers_count,
+    following_count: user.following_count,
+    token,
+  });
+};
+
+module.exports = { getUsers, getUser, createUser, signInUser, signInGoogle };

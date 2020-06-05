@@ -1,4 +1,5 @@
 import LikeActionTypes from "./like-types";
+import useFetch from "../../utils/hooks/useFetch";
 
 export const likePostStart = () => ({
   type: LikeActionTypes.LIKE_POST_START,
@@ -18,7 +19,7 @@ export const likePostAsync = (postId, userId) => {
   return (dispatch) => {
     dispatch(likePostStart);
 
-    return fetch(`${process.env.REACT_APP_API_URL}/posts/${postId}/like`, {
+    return useFetch(`${process.env.REACT_APP_API_URL}/posts/${postId}/like`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -28,7 +29,6 @@ export const likePostAsync = (postId, userId) => {
       },
       body: JSON.stringify({ userId }),
     })
-      .then((res) => res.json())
       .then((json) => {
         dispatch(likePostSuccess(json.like));
       })
@@ -54,7 +54,7 @@ export const unlikePostAsync = (postId, userId) => {
   return (dispatch) => {
     dispatch(unlikePostStart);
 
-    return fetch(`${process.env.REACT_APP_API_URL}/posts/${postId}/unlike`, {
+    return useFetch(`${process.env.REACT_APP_API_URL}/posts/${postId}/unlike`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -64,7 +64,6 @@ export const unlikePostAsync = (postId, userId) => {
       },
       body: JSON.stringify({ userId }),
     })
-      .then((res) => res.json())
       .then((json) => {
         dispatch(unlikePostSuccess(json.like));
       })
@@ -90,14 +89,13 @@ export const fetchUserLikesAsync = (userId) => {
   return (dispatch) => {
     dispatch(fetchUserLikesStart);
 
-    return fetch(`${process.env.REACT_APP_API_URL}/users/${userId}/likes`, {
+    return useFetch(`${process.env.REACT_APP_API_URL}/users/${userId}/likes`, {
       headers: {
         Authorization: `Bearer ${
           JSON.parse(localStorage.getItem("user")).token
         }`,
       },
     })
-      .then((res) => res.json())
       .then((json) => {
         dispatch(fetchUserLikesSuccess(json.data));
       })

@@ -28,3 +28,8 @@ Content-Type: application/json
   "password": "somepassword",
   "email": "someemail@gmail.com"
 }
+
+###
+
+POST http://127.0.0.1:4000/api/v1/users/auth/google
+

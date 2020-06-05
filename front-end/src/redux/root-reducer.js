@@ -1,23 +1,21 @@
-import { combineReducers } from 'redux';
-import { persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+import { combineReducers } from "redux";
+import { persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
 
-import userReducer from './users/user-reducers';
-import postReducer from './posts/post-reducers';
-import storyReducer from './stories/story-reducers';
-import likeReducer from './likes/like-reducers';
-import followReducer from './follows/follow-reducers';
-import commentReducer from './comments/comment-reducers';
+import userReducer from "./users/user-reducers";
+import postReducer from "./posts/post-reducers";
+import likeReducer from "./likes/like-reducers";
+import followReducer from "./follows/follow-reducers";
+import commentReducer from "./comments/comment-reducers";
 
 const persistConfig = {
-  key: 'root',
+  key: "root",
   storage,
 };
 
 const rootReducer = combineReducers({
   user: userReducer,
   post: postReducer,
-  story: storyReducer,
   like: likeReducer,
   follow: followReducer,
   comment: commentReducer,

@@ -6,16 +6,8 @@
   position: fixed;
   flex-direction: row;
   height: 100vh;
-  .leftNav__logo-image {
-    display: block;
-    width: 60px;
-    height: 60px;
-    background-image: url("../../../img/logo.png");
-    background-size: cover;
-    margin: 0 auto;
-  }
+
   .leftNav__profile-container {
-    margin-top: 80px;
     display: flex;
     flex-direction: column;
     align-items: center;

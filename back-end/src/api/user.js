@@ -8,6 +8,7 @@ const {
   getUser,
   createUser,
   signInUser,
+  signInGoogle,
 } = require("../../db/controllers/user_controllers");
 
 const { getUserLikes } = require("../../db/controllers/like_controllers");
@@ -20,7 +21,7 @@ const {
 
 const router = express.Router();
 
-router.get("/", authenticateToken, getUsers);
+router.get("/", getUsers);
 router.get("/:userId", authenticateToken, getUser);
 router.get("/:userId/likes", authenticateToken, getUserLikes);
 
@@ -46,6 +47,15 @@ router.post(
     check("password").isLength({ min: 6, max: 500 }),
   ],
   signInUser
+);
+
+router.post(
+  "/google",
+  [
+    check("email").isEmail().normalizeEmail(),
+    check("password").isLength({ min: 6, max: 500 }),
+  ],
+  signInGoogle
 );
 
 router.delete("/:userId/unfollow", authenticateToken, unfollowUser);

@@ -36,7 +36,9 @@ const Header = ({ searchUsers }) => {
 
   const modalToggle = (e) => {
     if (e.target.className) {
-      if (
+      if (e.target.localName === "path" || e.target.localName === "svg") {
+        return toggleModal((prevState) => !prevState);
+      } else if (
         e.target.className.includes("backdrop") ||
         e.target.className.includes("modal-close")
       ) {

@@ -48,6 +48,25 @@ const userReducer = (state = INITIAL_STATE, action) => {
         currentUser: action.payload,
         isFetching: false,
       };
+    case UserActionTypes.SIGN_IN_GOOGLE_START:
+      return {
+        ...state,
+        error: null,
+        user: null,
+        isFetching: true,
+      };
+    case UserActionTypes.SIGN_IN_GOOGLE_FAILURE:
+      return {
+        ...state,
+        error: action.payload,
+        isFetching: false,
+      };
+    case UserActionTypes.SIGN_IN_GOOGLE_SUCCESS:
+      return {
+        ...state,
+        currentUser: action.payload,
+        isFetching: false,
+      };
     case UserActionTypes.SIGN_OUT:
       return {
         ...state,

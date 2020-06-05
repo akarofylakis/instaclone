@@ -15,6 +15,7 @@ import Post from "../../../pages/Post/Post";
 import Search from "../../../pages/Search/Search";
 import Content from "../Content/Content";
 import MobileNav from "../MobileNav/MobileNav";
+import NotFound from "../NotFound/NotFound";
 
 const SignedIn = () => {
   return (
@@ -37,7 +38,8 @@ const SignedIn = () => {
             <Route path={`/search`} exact>
               <Search />
             </Route>
-            <Route render={() => <Redirect to="/" />} />
+            <Route path={`/signin`} render={() => <Redirect to="/" />} />
+            <Route render={() => <NotFound />} />
           </Switch>
         </Content>
       </div>

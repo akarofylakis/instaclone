@@ -1,4 +1,5 @@
 import PostActionTypes from "./post-types";
+import useFetch from "../../utils/hooks/useFetch";
 
 export const fetchPostsStart = () => ({
   type: PostActionTypes.FETCH_POSTS_START,
@@ -18,14 +19,13 @@ export const fetchPostsAsync = (userId) => {
   return (dispatch) => {
     dispatch(fetchPostsStart());
 
-    return fetch(`${process.env.REACT_APP_API_URL}/posts/feed/${userId}`, {
+    return useFetch(`${process.env.REACT_APP_API_URL}/posts/feed/${userId}`, {
       headers: {
         Authorization: `Bearer ${
           JSON.parse(localStorage.getItem("user")).token
         }`,
       },
     })
-      .then((res) => res.json())
       .then((json) => {
         dispatch(fetchPostsSuccess(json.feed));
       })
@@ -51,14 +51,13 @@ export const fetchPostAsync = (postId) => {
   return (dispatch) => {
     dispatch(fetchPostStart());
 
-    return fetch(`${process.env.REACT_APP_API_URL}/posts/${postId}`, {
+    return useFetch(`${process.env.REACT_APP_API_URL}/posts/${postId}`, {
       headers: {
         Authorization: `Bearer ${
           JSON.parse(localStorage.getItem("user")).token
         }`,
       },
     })
-      .then((res) => res.json())
       .then((json) => {
         dispatch(fetchPostSuccess(json.data));
       })
@@ -84,7 +83,7 @@ export const fetchUserPostsAsync = (userId) => {
   return (dispatch) => {
     dispatch(fetchUserPostsStart());
 
-    return fetch(
+    return useFetch(
       `${process.env.REACT_APP_API_URL}/posts/user/${userId}/posts`,
       {
         headers: {
@@ -94,7 +93,6 @@ export const fetchUserPostsAsync = (userId) => {
         },
       }
     )
-      .then((res) => res.json())
       .then((json) => {
         if (json) {
           dispatch(fetchUserPostsSuccess(json.data));
@@ -124,7 +122,7 @@ export const createPostAsync = (post) => {
   return (dispatch) => {
     dispatch(createPostStart());
 
-    return fetch(`${process.env.REACT_APP_API_URL}/posts/create`, {
+    return useFetch(`${process.env.REACT_APP_API_URL}/posts/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -134,7 +132,6 @@ export const createPostAsync = (post) => {
       },
       body: JSON.stringify(post),
     })
-      .then((res) => res.json())
       .then((json) => {
         dispatch(createPostSuccess(json.data));
       })

@@ -1,4 +1,5 @@
 import UserActionTypes from "./user-types";
+import useFetch from "../../utils/hooks/useFetch";
 
 export const signUpStart = (userCredentials) => ({
   type: UserActionTypes.SIGN_UP_START,
@@ -19,22 +20,20 @@ export const signUpAsync = (userCredentials) => {
   return (dispatch) => {
     dispatch(signUpStart(userCredentials));
 
-    return fetch(`${process.env.REACT_APP_API_URL}/users/signup`, {
+    return useFetch(`${process.env.REACT_APP_API_URL}/users/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(userCredentials),
-    })
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.token) {
-          dispatch(signUpSuccess(json));
-          localStorage.setItem("user", JSON.stringify(json));
-        } else {
-          dispatch(signUpFailure(json.message));
-        }
-      });
+    }).then((json) => {
+      if (json.token) {
+        dispatch(signUpSuccess(json));
+        localStorage.setItem("user", JSON.stringify(json));
+      } else {
+        dispatch(signUpFailure(json.message));
+      }
+    });
   };
 };
 
@@ -57,26 +56,58 @@ export const signInAsync = (userCredentials) => {
   return (dispatch) => {
     dispatch(signInStart(userCredentials));
 
-    return fetch(`${process.env.REACT_APP_API_URL}/users/signin`, {
+    return useFetch(`${process.env.REACT_APP_API_URL}/users/signin`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(userCredentials),
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((json) => {
-        if (json.token) {
-          console.log(json);
-          dispatch(signInSuccess(json));
-          localStorage.setItem("user", JSON.stringify(json));
-        } else {
-          console.log(json);
-          dispatch(signInFailure(json.message));
-        }
-      });
+    }).then((json) => {
+      if (json.token) {
+        console.log(json);
+        dispatch(signInSuccess(json));
+        localStorage.setItem("user", JSON.stringify(json));
+      } else {
+        console.log(json);
+        dispatch(signInFailure(json.message));
+      }
+    });
+  };
+};
+
+export const signInGoogleStart = (userCredentials) => ({
+  type: UserActionTypes.SIGN_IN_START,
+  payload: userCredentials,
+});
+
+export const signInGoogleFailure = (error) => ({
+  type: UserActionTypes.SIGN_IN_FAILURE,
+  payload: error,
+});
+
+export const signInGoogleSuccess = (userCredentials) => ({
+  type: UserActionTypes.SIGN_IN_SUCCESS,
+  payload: userCredentials,
+});
+
+export const signInGoogleAsync = (userCredentials) => {
+  return (dispatch) => {
+    dispatch(signInGoogleStart(userCredentials));
+
+    return useFetch(`${process.env.REACT_APP_API_URL}/users/google`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userCredentials),
+    }).then((json) => {
+      if (json.token) {
+        dispatch(signInGoogleSuccess(json));
+        localStorage.setItem("user", JSON.stringify(json));
+      } else {
+        dispatch(signInGoogleFailure(json.message));
+      }
+    });
   };
 };
 
@@ -109,14 +140,13 @@ export const searchUsersAsync = (searchString) => {
   return (dispatch) => {
     dispatch(searchUsersStart());
 
-    return fetch(`${process.env.REACT_APP_API_URL}/users`, {
+    return useFetch(`${process.env.REACT_APP_API_URL}/users`, {
       headers: {
         Authorization: `Bearer ${
           JSON.parse(localStorage.getItem("user")).token
         }`,
       },
     })
-      .then((res) => res.json())
       .then((json) => {
         const data = json.data.filter((user) =>
           user.username.toLowerCase().includes(searchString.toLowerCase())
@@ -135,16 +165,14 @@ export const fetchUserSuccess = (user) => ({
 
 export const fetchUserAsync = (userId) => {
   return (dispatch) => {
-    return fetch(`${process.env.REACT_APP_API_URL}/users/${userId}`, {
+    return useFetch(`${process.env.REACT_APP_API_URL}/users/${userId}`, {
       headers: {
         Authorization: `Bearer ${
           JSON.parse(localStorage.getItem("user")).token
         }`,
       },
-    })
-      .then((res) => res.json())
-      .then((json) => {
-        dispatch(fetchUserSuccess(json.data));
-      });
+    }).then((json) => {
+      dispatch(fetchUserSuccess(json.data));
+    });
   };
 };

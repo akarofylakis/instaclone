@@ -64,6 +64,8 @@ const HomeFeed = ({
     userLikes = [];
   }
 
+  console.log("HOMEPAGE RENDERED");
+
   useEffect(() => {
     fetchPosts(currentUser.userId);
     fetchUserLikes(currentUser.userId);
