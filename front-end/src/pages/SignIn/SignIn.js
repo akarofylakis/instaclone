@@ -76,7 +76,7 @@ const SignIn = ({ signIn, signInGoogle }) => {
           />
         </Button>
         <GoogleLogin
-          clientId="489761259256-bpb1cte3obpjcnn460d1onb3j81d0dhf.apps.googleusercontent.com"
+          clientId={`${process.env.GOOGLE_CONSUMER_KEY}`}
           buttonText="Sign In With Google"
           onSuccess={responseGoogle}
           onFailure={responseGoogle}
