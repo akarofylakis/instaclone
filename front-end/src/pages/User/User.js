@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
+import { DEFAULT_USER, DEFAULT_USER_PROFILE } from "../../utils/constants";
+
 import {
   selectCurrentUser,
   selectUserProfile,
@@ -29,36 +31,6 @@ import LoadingSpinner from "../../components/UI/LoadingSpinner/LoadingSpinner";
 
 import "./User.scss";
 
-const DEFAULT_USER = {
-  avatar_url: "",
-  userId: "",
-  email: "",
-  posts_count: 0,
-  followers_count: 0,
-  following_count: 0,
-  username: "",
-  fullname: "",
-  id: "",
-  summary: "",
-  token: "",
-};
-
-const DEFAULT_USER_PROFILE = {
-  userId: "",
-  email: "",
-  posts_count: 0,
-  followers_count: 0,
-  following_count: 0,
-  user_info: {
-    avatar_url: "",
-    summary: "",
-    fullname: "",
-  },
-  username: "",
-  id: "",
-  token: "",
-};
-
 const User = ({
   match,
   currentUser,
@@ -80,16 +52,20 @@ const User = ({
   if (!userProfile) {
     userProfile = DEFAULT_USER_PROFILE;
   }
+  if (!userProfile.user_info) {
+    userProfile = DEFAULT_USER_PROFILE;
+  }
   if (!userLikes) {
     userLikes = [];
   }
 
-  const followedByUser = userFollows.filter(
-    (follow) => follow.user === match.params.userId
-  )[0]
-    ? true
-    : false;
-  const [followStatus, toggleFollow] = useState(followedByUser);
+  const [followStatus, toggleFollow] = useState(() => {
+    return userFollows.filter(
+      (follow) => follow.user === match.params.userId
+    )[0]
+      ? true
+      : false;
+  });
 
   useEffect(() => {
     fetchUserPosts(match.params.userId);
@@ -166,22 +142,20 @@ const User = ({
         {postsIsFetching && <LoadingSpinner />}
         <ul className="feed-list">
           {userPosts[0] ? (
-            userPosts
-              .reverse()
-              .map((post) => (
-                <Item
-                  key={post.id}
-                  postId={post.id}
-                  source={post.image_url}
-                  likes={post.likes_count}
-                  comments={post.comments_count}
-                  likedByCurrentUser={
-                    userLikes.filter((userLike) => userLike.post === post.id)[0]
-                      ? true
-                      : false
-                  }
-                />
-              ))
+            userPosts.map((post) => (
+              <Item
+                key={post.id}
+                postId={post.id}
+                source={post.image_url}
+                likes={post.likes_count}
+                comments={post.comments_count}
+                likedByCurrentUser={
+                  userLikes.filter((userLike) => userLike.post === post.id)[0]
+                    ? true
+                    : false
+                }
+              />
+            ))
           ) : (
             <h5 className="no-data">No posts</h5>
           )}

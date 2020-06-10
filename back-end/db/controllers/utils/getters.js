@@ -129,8 +129,8 @@ const getFeed = (collection) => {
     const { userId } = req.params;
 
     const user = await idGetter(User, userId, `Fetching user failed.`);
-    let ownPosts;
 
+    let ownPosts;
     try {
       ownPosts = await collection.find({
         user,
@@ -146,7 +146,8 @@ const getFeed = (collection) => {
       return next(new HttpError(`Fetching data failed.`, 500));
     }
 
-    let feed = await following.reduce(async (accum, userFollowing) => {
+    let feed = await following.reduce(async (accumP, userFollowing) => {
+      const accum = await accumP;
       let userData;
 
       try {
@@ -158,9 +159,9 @@ const getFeed = (collection) => {
       }
 
       if (userData) {
-        return userData;
+        return accum.concat(userData);
       }
-    }, []);
+    }, Promise.resolve([]));
 
     feed = feed.concat(ownPosts);
 

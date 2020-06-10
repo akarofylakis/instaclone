@@ -1,15 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
 import { useForm } from "../../../utils/hooks/useForm";
-
-import { VALIDATOR_REQUIRED, VALIDATOR_URL } from "../../../utils/validators";
 
 import { createPostAsync } from "../../../redux/posts/post-actions";
 import { selectCurrentUser } from "../../../redux/users/user-selectors";
 
 import Button from "../../UI/Button/Button";
 import Input from "../../UI/Input/Input";
+import LoadingSpinner from "../../UI/LoadingSpinner/LoadingSpinner";
 import AddIcon from "../../../img/icons/Add";
 
 import "./AddModal.scss";
@@ -21,16 +21,43 @@ const AddModal = ({
   currentUser,
 }) => {
   const [post, changeHandler] = useForm({
-    imageUrl: "",
     caption: "",
   });
+  const { caption } = post;
 
-  const { imageUrl, caption } = post;
+  const [fileUrl, setFileUrl] = useState("");
+  const [file, setFile] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const chooseFile = (e) => {
+    if (e.target.files[0]) {
+      setFileUrl(URL.createObjectURL(e.target.files[0]));
+    }
+    setFile(e.target.files[0]);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const postToBeCreated = { ...post, userId: currentUser.userId };
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", "akarofylakis");
+    setLoading(true);
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/akarofylakis/upload",
+      {
+        method: "POST",
+        body: data,
+      }
+    );
+    console.log(res);
+    const imageFile = await res.json();
+    const imageUrl = imageFile.secure_url;
+    setLoading(false);
+
+    const postToBeCreated = { ...post, userId: currentUser.userId, imageUrl };
     createPost(postToBeCreated);
+
+    window.location.reload();
   };
 
   return (
@@ -47,23 +74,23 @@ const AddModal = ({
         <div className="image-upload-container">
           <div
             className="image-preview"
-            style={{ backgroundImage: `url(${post.imageUrl})` }}
+            style={{ backgroundImage: `url(${fileUrl})` }}
           >
-            {!post.imageUrl && <h6>Image Preview</h6>}
+            {!fileUrl && <h6>Image Preview</h6>}
           </div>
+
           <div className="image-upload-field">
-            <Input
-              onChange={changeHandler}
-              type="text"
-              name="imageUrl"
-              value={imageUrl}
-              validators={[VALIDATOR_REQUIRED(), VALIDATOR_URL()]}
-              errorMessage="Please enter a valid image URL"
-              placeholder="Image URL"
-            />
-            <Button secondary text="Generate Random"></Button>
+            <Button secondary text="Choose a file">
+              <input
+                onChange={chooseFile}
+                accept="image/x-png,image/gif,image/jpeg, image/jpg"
+                type="file"
+                name="file"
+              ></input>
+            </Button>
           </div>
         </div>
+
         <Input
           onChange={changeHandler}
           type="textarea"
@@ -71,9 +98,11 @@ const AddModal = ({
           value={caption}
           placeholder="Add your caption here..."
         />
+
         <Button onClick={forceCloseModal} primary type="submit" text="Upload">
           <AddIcon />
         </Button>
+        {loading && <LoadingSpinner />}
       </form>
     </div>
   );
@@ -87,4 +116,7 @@ const mapStateToProps = (state) => ({
   currentUser: selectCurrentUser(state),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddModal);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(AddModal));

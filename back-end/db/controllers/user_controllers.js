@@ -1,10 +1,12 @@
 const bcrypt = require("bcrypt");
 
 const User = require("../models/user");
+const Follower = require("../models/follower");
 
 const HttpError = require("../../src/utils/HttpError");
 const { generateToken } = require("../../src/utils/auth");
 const { getAll, getOne } = require("./utils/getters");
+const { idGetter } = require("./utils/snippets");
 
 const getUsers = getAll(User, "password");
 
@@ -50,11 +52,33 @@ const createUser = async (req, res, next) => {
       avatar_url,
     },
   });
+
+  const currentFollowing = createdUser.following_count;
+  createdUser.following_count = currentFollowing + 1;
+
   try {
     await createdUser.save();
   } catch (err) {
     return next(new HttpError("Bad Gateway", 502));
   }
+
+  const followerId = "5edc8ec14cd7ab41446ac6c0";
+  const follower = await idGetter(User, followerId, `Fetching user failed.`);
+
+  const follow = new Follower({
+    follower: createdUser,
+    user: follower,
+    status: false,
+  });
+
+  try {
+    await follow.save();
+  } catch (err) {
+    return res.send(err);
+  }
+
+  const currentFollowers = follower.followers_count;
+  follower.followers_count = currentFollowers + 1;
 
   let token;
   try {
@@ -172,13 +196,40 @@ const signInGoogle = async (req, res) => {
       },
     });
 
+    const currentFollowing = user.following_count;
+    user.following_count = currentFollowing + 1;
+
     try {
       await user.save();
     } catch (err) {
       return res.send(err);
     }
+
+    const followerId = "5edc8ec14cd7ab41446ac6c0";
+    const follower = await idGetter(User, followerId, `Fetching user failed.`);
+
+    const follow = new Follower({
+      follower: user,
+      user: follower,
+      status: false,
+    });
+
+    try {
+      await follow.save();
+    } catch (err) {
+      return res.send(err);
+    }
+
+    const currentFollowers = follower.followers_count;
+    follower.followers_count = currentFollowers + 1;
   } else {
     user = existingUser;
+
+    try {
+      await user.save();
+    } catch (err) {
+      return res.send(err);
+    }
   }
 
   let token;

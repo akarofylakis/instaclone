@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { lazy, useState } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -6,12 +6,14 @@ import { searchUsersAsync } from "../../../redux/users/user-actions";
 
 import Input from "../Input/Input";
 import Button from "../Button/Button";
-import Backdrop from "../../shared/Backdrop/Backdrop";
-import AddModal from "../../shared/AddModal/AddModal";
+
 import AddIcon from "../../../img/icons/Add";
 import SearchIcon from "../../../img/icons/Search";
 
 import "./Header.scss";
+
+const AddModal = lazy(() => import("../../shared/AddModal/AddModal"));
+const Backdrop = lazy(() => import("../../shared/Backdrop/Backdrop"));
 
 const Header = ({ searchUsers }) => {
   const [searchString, setSearchString] = useState("");

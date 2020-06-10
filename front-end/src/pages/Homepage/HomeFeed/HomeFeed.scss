@@ -13,6 +13,19 @@
     flex-wrap: wrap;
     margin-bottom: 20px;
   }
+
+  .text-container h6 {
+    font-size: 13px;
+    width: 80%;
+    margin: 0 auto;
+    margin-bottom: 30px;
+    text-align: center;
+    line-height: 1.5;
+    color: #555;
+    span {
+      font-weight: 600;
+    }
+  }
 }
 
 @media only screen and (max-width: 800px) {

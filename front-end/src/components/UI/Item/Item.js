@@ -73,7 +73,16 @@ const Item = ({
           <Link to={`/post/${postId}`}></Link>
         </div>
 
-        <Link to={`/post/${postId}`}>
+        <Link
+          to={{
+            pathname: `/post/${postId}`,
+            state: {
+              likedByCurrentUser: likeStatus,
+              currentLikes,
+              currentComments: comments,
+            },
+          }}
+        >
           <div className="item__image-caption">
             <h4>Open Post</h4>
             <img
@@ -131,4 +140,4 @@ const mapDispatchToProps = (dispatch) => ({
   unlikePost: (postId, userId) => dispatch(unlikePostAsync(postId, userId)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Item);
+export default connect(mapStateToProps, mapDispatchToProps)(React.memo(Item));

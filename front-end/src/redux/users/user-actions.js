@@ -37,6 +37,21 @@ export const signUpAsync = (userCredentials) => {
   };
 };
 
+export const fetchCurrentUserSuccess = (userData) => ({
+  type: UserActionTypes.FETCH_CURRENT_USER,
+  payload: userData,
+});
+
+export const fetchCurrentUserAsync = (userId) => {
+  return (dispatch) => {
+    return useFetch(`${process.env.REACT_APP_API_URL}/users/${userId}`).then(
+      (json) => {
+        dispatch(fetchUserSuccess(json));
+      }
+    );
+  };
+};
+
 export const signInStart = (userCredentials) => ({
   type: UserActionTypes.SIGN_IN_START,
   payload: userCredentials,
@@ -64,12 +79,11 @@ export const signInAsync = (userCredentials) => {
       body: JSON.stringify(userCredentials),
     }).then((json) => {
       if (json.token) {
-        console.log(json);
         dispatch(signInSuccess(json));
         localStorage.setItem("user", JSON.stringify(json));
       } else {
-        console.log(json);
         dispatch(signInFailure(json.message));
+        alert("Wrong credentials, please try again.");
       }
     });
   };

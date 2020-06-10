@@ -78,7 +78,6 @@
       img {
         width: 20px;
         margin-right: 5px;
-        cursor: pointer;
         &.show-off {
           display: none;
         }
@@ -87,6 +86,12 @@
       h6 {
         font-size: 12px;
       }
+    }
+  }
+
+  .post__post-info .likes {
+    img {
+      cursor: pointer;
     }
   }
 

@@ -3,20 +3,17 @@ import { connect } from "react-redux";
 import { Link, withRouter } from "react-router-dom";
 
 import timeSince from "../../utils/formatDate";
+import { DEFAULT_POST, DEFAULT_USER_PROFILE } from "../../utils/constants";
 
 import { selectCurrentUser } from "../../redux/users/user-selectors";
 import { selectCurrentPost } from "../../redux/posts/post-selectors";
-import {
-  selectPostComments,
-  selectCurrentComment,
-} from "../../redux/comments/comment-selectors";
+import { selectPostComments } from "../../redux/comments/comment-selectors";
 
 import { fetchPostAsync } from "../../redux/posts/post-actions";
 import { likePostAsync, unlikePostAsync } from "../../redux/likes/like-actions";
 import {
   fetchPostCommentsAsync,
   createCommentAsync,
-  deleteCommentAsync,
 } from "../../redux/comments/comment-actions";
 
 import { selectUserLikes } from "../../redux/likes/like-selectors";
@@ -27,22 +24,6 @@ import Input from "../../components/UI/Input/Input";
 
 import "./Post.scss";
 
-const DEFAULT_POST = {
-  image_url: "",
-  caption: "",
-  createdAt: "",
-  likes_count: 0,
-  comments_count: 0,
-  user: {
-    username: "",
-    id: "",
-    user_info: {
-      avatar_url: "",
-      summary: "",
-    },
-  },
-};
-
 const Post = ({
   match,
   history,
@@ -52,38 +33,46 @@ const Post = ({
   likePost,
   unlikePost,
   userLikes,
-  currentComment,
   postComments,
   fetchPostComments,
   createComment,
-  deleteComment,
+  ...props
 }) => {
   if (!post) {
     post = DEFAULT_POST;
   }
 
-  const likedByCurrentUser = userLikes.filter(
-    (userLike) => userLike.post === post.id
-  )[0]
-    ? true
-    : false;
+  if (!post.user) {
+    post.user = DEFAULT_USER_PROFILE;
+  }
 
-  const [likeStatus, toggleLike] = useState(likedByCurrentUser);
+  if (!postComments) {
+    postComments = [];
+  }
+
+  let initialLikeStatus = false;
+  let initialLikes = post.likes_count;
+  let initialComments = post.comments_count;
+  if (props.location.state) {
+    initialLikeStatus = props.location.state.likedByCurrentUser;
+    initialLikes = props.location.state.currentLikes;
+    initialComments = props.location.state.currentComments;
+  }
+
+  const [likeStatus, toggleLike] = useState(initialLikeStatus);
+  const [currentLikes, mutateLikes] = useState(initialLikes);
   const [comment, setComment] = useState("");
-  const [currentLikes, mutateLikes] = useState(post.likes_count);
+  const [currentComments, mutateComments] = useState(initialComments);
+
+  useEffect(() => {
+    fetchPostComments(match.params.postId);
+    toggleLike(likeStatus);
+    mutateLikes(currentLikes);
+  }, [fetchPostComments, match.params.postId, currentLikes, likeStatus]);
 
   useEffect(() => {
     fetchPost(match.params.postId);
-    fetchPostComments(match.params.postId);
-    toggleLike(likedByCurrentUser);
-    mutateLikes(post.likes_count);
-  }, [
-    fetchPost,
-    fetchPostComments,
-    match.params.postId,
-    post.likes_count,
-    likedByCurrentUser,
-  ]);
+  }, [fetchPost, match.params.postId]);
 
   const likeToggler = () => {
     toggleLike((prevState) => {
@@ -104,7 +93,9 @@ const Post = ({
 
   const onCommentSubmit = () => {
     createComment(match.params.postId, currentUser.userId, comment);
+    mutateComments((prevComments) => prevComments + 1);
     setComment("");
+    window.location.reload();
   };
 
   return (
@@ -173,7 +164,7 @@ const Post = ({
               alt="comment"
               src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAABlElEQVRIidXUP2tUURAF8F/CKqKSJRCSD+AqaiNJEQS1MUUaO6sVC7WwtRfxIxjBwiZJKTZWVmHbGLBRlJhGSAorLfwThaBF1uLNJS/xbd7djRYeuAx35syZue/NvfzvGKqJN9HGLM5hPPwf8QZLeIpv/RZu4D6+oluzvuBe5GRhAislgSXcQAtHY53EzYgl3ovSCXuiideRsI4LGQ1dxEbkvAqNnlgM4juMZYgnjGEtcud7kaawjS2c6EM8oRW525isIjyMDh4MIJ4wFxpzVcHVCE4foMD50HhbFdyM4EjJlyYkd9+M/WZyDO8hHxS/wh6qKvAh7OmSb8ju2163Pxv2fVWBTth2dr9/4krYl1XBSTtj2hpAfBSfFJ96phdpIQhr+rto8DhyV+3ziDYV172ruP6XMsWvKU7fxeU68jiW7YxgB7dwCsdwHGdwNfiz+BncR5kNaeAuPtv9NO9d10viHRzOLZAwgtt4phi9H/heKpA+y3Mc6Vd8P5RP8cQAnecU2MKdvy2csKz40f8Mw/WUAr8BryZxzOuWYHcAAAAASUVORK5CYII="
             />
-            <h6>{post.comments_count} Comments</h6>
+            <h6>{currentComments} Comments</h6>
           </div>
         </div>
       </div>
@@ -220,17 +211,15 @@ const mapDispatchToProps = (dispatch) => ({
   unlikePost: (postId, userId) => dispatch(unlikePostAsync(postId, userId)),
   createComment: (postId, userId, body) =>
     dispatch(createCommentAsync(postId, userId, body)),
-  deleteComment: (postId, commentId, userId) =>
-    dispatch(deleteCommentAsync(postId, commentId, userId)),
   fetchPostComments: (postId) => dispatch(fetchPostCommentsAsync(postId)),
 });
 
 const mapStateToProps = (state) => ({
   currentUser: selectCurrentUser(state),
   post: selectCurrentPost(state),
+
   userLikes: selectUserLikes(state),
   postComments: selectPostComments(state),
-  currentComment: selectCurrentComment(state),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Post));

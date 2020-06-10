@@ -5,24 +5,12 @@ import { Link, NavLink } from "react-router-dom";
 import { selectCurrentUser } from "../../../redux/users/user-selectors";
 import { signOutAsync } from "../../../redux/users/user-actions";
 
+import { DEFAULT_USER } from "../../../utils/constants";
+
 import Avatar from "../Avatar/Avatar";
 import Logo from "../Logo/Logo";
 
 import "./LeftNav.scss";
-
-const DEFAULT_USER = {
-  avatar_url: "",
-  userId: "",
-  email: "",
-  posts_count: 0,
-  followers_count: 0,
-  following_count: 0,
-  username: "",
-  fullname: "",
-  id: "",
-  summary: "",
-  token: "",
-};
 
 const LeftNav = ({ currentUser, signOut }) => {
   if (!currentUser) {

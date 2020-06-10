@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import { createSelector } from "reselect";
 
 const selectPost = (state) => state.post;
 
@@ -17,4 +17,9 @@ export const selectUserPosts = createSelector([selectPost], (posts) =>
 export const selectPostsIsFetching = createSelector(
   [selectPost],
   (post) => post.isFetching
+);
+
+export const selectNewPostEvent = createSelector(
+  [selectPost],
+  (post) => post.newPostEvent
 );

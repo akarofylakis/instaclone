@@ -1,8 +1,15 @@
 import React, { useEffect } from "react";
+
 import { connect } from "react-redux";
 
 import { fetchPostsAsync } from "../../../redux/posts/post-actions";
 import { fetchUserLikesAsync } from "../../../redux/likes/like-actions";
+
+import {
+  DEFAULT_POSTS,
+  DEFAULT_USER,
+  DEFAULT_USER_PROFILE,
+} from "../../../utils/constants";
 
 import {
   selectPosts,
@@ -15,38 +22,6 @@ import Item from "../../../components/UI/Item/Item";
 import LoadingSpinner from "../../../components/UI/LoadingSpinner/LoadingSpinner";
 
 import "./HomeFeed.scss";
-
-const DEFAULT_USER = {
-  avatar_url: "",
-  userId: "",
-  email: "",
-  posts_count: 0,
-  followers_count: 0,
-  following_count: 0,
-  username: "",
-  fullname: "",
-  id: "",
-  summary: "",
-  token: "",
-};
-
-const DEFAULT_POSTS = [
-  {
-    image_url: "",
-    caption: "",
-    createdAt: "",
-    likes_count: 0,
-    comments_count: 0,
-    user: {
-      username: "",
-      id: "",
-      user_info: {
-        avatar_url: "defaulturl.com",
-        summary: "",
-      },
-    },
-  },
-];
 
 const HomeFeed = ({
   fetchPosts,
@@ -64,8 +39,6 @@ const HomeFeed = ({
     userLikes = [];
   }
 
-  console.log("HOMEPAGE RENDERED");
-
   useEffect(() => {
     fetchPosts(currentUser.userId);
     fetchUserLikes(currentUser.userId);
@@ -77,14 +50,30 @@ const HomeFeed = ({
 
   return (
     <div className="homeFeed">
+      <div className="text-container">
+        <h6>
+          Welcome to <span>folllowr!</span> This is social network clone app
+          that is made just for self-learning reasons. Upon signing up, you
+          automatically get to follow some fictional users and have some
+          pre-existing activity (likes/comments) for demonstration purposes.
+          Icons used are property of icons8.
+          <br />
+          <span>
+            Every post image used is property of Unsplash and their respecting
+            creators/photographers.
+          </span>
+        </h6>
+      </div>
       <h2>Feed</h2>
       <div className="list-container">
         {postsIsFetching && <LoadingSpinner />}
         <ul className="feed-list">
           {posts[0] ? (
-            posts
-              .reverse()
-              .map((post) => (
+            posts.map((post) => {
+              if (!post.user) {
+                post.user = DEFAULT_USER_PROFILE;
+              }
+              return (
                 <Item
                   key={post.id}
                   postId={post.id}
@@ -100,7 +89,8 @@ const HomeFeed = ({
                       : false
                   }
                 />
-              ))
+              );
+            })
           ) : (
             <h5 className="no-data">No posts</h5>
           )}

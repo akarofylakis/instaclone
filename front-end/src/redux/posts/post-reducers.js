@@ -1,4 +1,4 @@
-import PostActionTypes from './post-types';
+import PostActionTypes from "./post-types";
 
 const INITIAL_STATE = {
   posts: [],
@@ -6,6 +6,7 @@ const INITIAL_STATE = {
   userPosts: [],
   isFetching: false,
   error: null,
+  newPostEvent: false,
 };
 
 const postReducer = (state = INITIAL_STATE, action) => {
@@ -65,15 +66,18 @@ const postReducer = (state = INITIAL_STATE, action) => {
     case PostActionTypes.CREATE_POST_START:
       return {
         ...state,
+        newPostEvent: false,
       };
     case PostActionTypes.CREATE_POST_FAILURE:
       return {
         ...state,
         error: action.payload,
+        newPostEvent: false,
       };
     case PostActionTypes.CREATE_POST_SUCCESS:
       return {
         ...state,
+        newPostEvent: true,
       };
     default:
       return state;
