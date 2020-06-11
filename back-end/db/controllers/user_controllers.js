@@ -168,6 +168,7 @@ const signInUser = async (req, res, next) => {
 
 const signInGoogle = async (req, res) => {
   const { email, username, password, fullname, summary, avatar_url } = req.body;
+  console.log(email, username, password, fullname, avatar_url);
 
   let existingUser;
   try {

@@ -49,7 +49,7 @@ const AddModal = ({
         body: data,
       }
     );
-    console.log(res);
+
     const imageFile = await res.json();
     const imageUrl = imageFile.secure_url;
     setLoading(false);

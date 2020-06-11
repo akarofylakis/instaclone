@@ -108,6 +108,8 @@ export const signInGoogleAsync = (userCredentials) => {
   return (dispatch) => {
     dispatch(signInGoogleStart(userCredentials));
 
+    console.log(userCredentials);
+
     return useFetch(`${process.env.REACT_APP_API_URL}/users/google`, {
       method: "POST",
       headers: {

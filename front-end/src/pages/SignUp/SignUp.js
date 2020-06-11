@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -26,7 +26,6 @@ const SignUp = ({ signUp }) => {
     confirmPassword: "",
     fullname: "",
     summary: "",
-    avatar_url: "",
   });
 
   const {
@@ -36,23 +35,49 @@ const SignUp = ({ signUp }) => {
     confirmPassword,
     fullname,
     summary,
-    avatar_url,
   } = userCredentials;
+
+  const [file, setFile] = useState("");
+  const [fileUrl, setFileUrl] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", "akarofylakis");
+
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/akarofylakis/upload",
+      {
+        method: "POST",
+        body: data,
+      }
+    );
+
+    const imageFile = await res.json();
+    const imageUrl = imageFile.secure_url;
+
     if (password !== confirmPassword) {
       alert("Passwords do not match, please try again.");
       return;
     }
+
     signUp({
       email,
       username,
       password,
       fullname,
       summary,
-      avatar_url,
+      avatar_url: imageUrl,
     });
+  };
+
+  const changeFile = async (e) => {
+    e.preventDefault();
+    if (e.target.files[0]) {
+      setFileUrl(URL.createObjectURL(e.target.files[0]));
+    }
+    setFile(e.target.files[0]);
   };
 
   return (
@@ -123,14 +148,21 @@ const SignUp = ({ signUp }) => {
           placeholder="Add your profile summary here..."
         />
         <div className="image-upload-container">
-          <Input
-            value={avatar_url}
-            onChange={changeHandler}
-            type="text"
-            name="avatar_url"
-            placeholder="Avatar URL"
-          />
-          <Button secondary text="Generate Random"></Button>
+          <Button secondary text="Upload Avatar Image">
+            <input
+              onChange={changeFile}
+              accept="image/x-png,image/gif,image/jpeg, image/jpg"
+              type="file"
+              name="file"
+            ></input>
+          </Button>
+
+          <div
+            className="image-preview"
+            style={{ backgroundImage: `url(${fileUrl})` }}
+          >
+            {!fileUrl && <h6>Image Preview</h6>}
+          </div>
         </div>
         <Button primary type="submit" text="Create Account">
           <AddIcon />
